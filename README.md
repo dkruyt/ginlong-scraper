@@ -45,6 +45,12 @@ mqtt_password 		= 'password'
 ###
 ```
 
+Create a cron entry, every 5 min is ok, becuase the inverter logs also every 5 min.
+
+```
+*/5 *     * * *     user	/opt/solis-influx/ginlong-scraper.py > /dev/null 2>&1
+```
+
 ## Bonus
 
 The grafana-dashboard-example.json file you could import in to Grafana if you use the influx database. Then you can make a dashboard similar to this. 
