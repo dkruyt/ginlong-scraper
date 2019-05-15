@@ -2,6 +2,8 @@
 
 A python script that scrapes PV statistics from the Ginlong monitor pages and outputs it to influxdb, pvoutput or mqtt.
 
+Other then the Ginlong Solis inverter that I own. Possible it also works with the following inverters: Omnik Solar, Solarman and Trannergy Inverters
+
 ## Install
 
 Install necessary python modules.
