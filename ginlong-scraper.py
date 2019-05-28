@@ -7,7 +7,7 @@ import time
 # solis/ginlong portal config
 username		= 'user@name' #your portal username
 password 		= 'password' #your portal password
-domain 			= 'monitoring.csisolar.com' #domain ginlong used multiple domains with same login but different versions, could change anytime. monitoring.csisolar.com, m.ginlong.com
+domain 			= 'm.ginlong.com' #domain ginlong used multiple domains with same login but different versions, could change anytime. monitoring.csisolar.com, m.ginlong.com
 lan 			= '2' #lanuage (2 = English)
 deviceId        	= 'deviceid' # your deviceid, if set to deviceid it will try to auto detect, if you have more then one device then specify. 
 
@@ -38,7 +38,7 @@ mqtt_password 		= 'password'
 session = requests.session()
 
 # building url
-url = 'http://'+domain+'/cpro/login/validateLogin.json'
+url = 'https://'+domain+'/cpro/login/validateLogin.json'
 params = {
     "userName": username,
     "password": password,
@@ -57,11 +57,8 @@ resultJson = resultData.json()
 if resultJson['result'].get('isAccept') == 1:
     print "Login Succesfull on",domain,"!"
 else:
-    print "Login Failedi on",domain,"!!"
+    print "Login Failed on",domain,"!!"
     Exit()
-
-# http://monitoring.csisolar.com/cpro/epc/plantview/view/doPlantList.json
-# http://monitoring.csisolar.com/cpro/epc/plantDevice/inverterListAjax.json?plantId=342202
 
 if deviceId == "deviceid":
 	print ''
@@ -189,8 +186,8 @@ if pvoutput == "true":
 	            "Accept": "text/plain"
 	}
 	
-	# make seconds, and add 2 hour tz correction
-	tuple_time = time.localtime(updateDate / 1000 + 7200)
+	# make seconds
+	tuple_time = time.localtime(updateDate / 1000)
         # Get hour and date	
 	date = time.strftime("%Y%m%d", tuple_time)
 	hour = time.strftime("%H:%M", tuple_time)
