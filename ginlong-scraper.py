@@ -108,12 +108,21 @@ AC_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1ao')
 AC_Frequency = resultJson['result']['deviceWapper']['dataJSON'].get('1ar')
 DC_Power_PV1 = resultJson['result']['deviceWapper']['dataJSON'].get('1s')
 DC_Power_PV2 = resultJson['result']['deviceWapper']['dataJSON'].get('1t')
+Power_Grid_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1bq')
+Total_On_grid_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bu')
+Total_Energy_Purchased = resultJson['result']['deviceWapper']['dataJSON'].get('1bv')
+AC_Output_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1ao')
 Inverter_Temperature = resultJson['result']['deviceWapper']['dataJSON'].get('1df')
 Daily_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bd')
 Monthly_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1be')
 Annual_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bf')
 Total_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bc')
 Generation_Last_Month = resultJson['result']['deviceWapper']['dataJSON'].get('1ru')
+Consumption_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1cj')
+Consumption_Energy = resultJson['result']['deviceWapper']['dataJSON'].get('1cn')
+Daily_Energy_Used = resultJson['result']['deviceWapper']['dataJSON'].get('1co')
+Monthly_Energy_Used = resultJson['result']['deviceWapper']['dataJSON'].get('1cp')
+Annual_Energy_Used = resultJson['result']['deviceWapper']['dataJSON'].get('1cq')
 
 niceTimestamp = time.ctime((updateDate) / 1000)
 
@@ -132,12 +141,21 @@ print 'AC_Power: ' + str(AC_Power)
 print 'AC_Frequency: ' + str(AC_Frequency)
 print 'DC_Power_PV1: ' + str(DC_Power_PV1)
 print 'DC_Power_PV2: ' + str(DC_Power_PV2)
+print 'Power_Grid_Total_Power: ' + str(Power_Grid_Total_Power)
+print 'Total_On_grid_Generation: ' + str(Total_On_grid_Generation)
+print 'Total_Energy_Purchased: ' + str(Total_Energy_Purchased)
+print 'AC_Output_Total_Power: ' + str(AC_Output_Total_Power)
 print 'Inverter_Temperature: ' + str(Inverter_Temperature)
-print "Daily_Generation: " + str(Daily_Generation)
-print "Monthly_Generation: " + str(Monthly_Generation)
-print "Annual_Generation: " + str(Annual_Generation)
-print "Total_Generation: " + str(Total_Generation)
-print "Generation_Last_Month: " + str(Generation_Last_Month)
+print 'Daily_Generation: ' + str(Daily_Generation)
+print 'Monthly_Generation: ' + str(Monthly_Generation)
+print 'Annual_Generation: ' + str(Annual_Generation)
+print 'Total_Generation: ' + str(Total_Generation)
+print 'Generation_Last_Month: ' + str(Generation_Last_Month)
+print 'Consumption_Power: ' + str(Consumption_Power)
+print 'Consumption_Energy: ' + str(Consumption_Power) 
+print 'Daily_Energy_Used: ' + str(Daily_Energy_Used)
+print 'Monthly_Energy_Used: ' + str(Monthly_Energy_Used)
+print 'Annual_Energy_Used: ' + str(Annual_Energy_Used)
 print('')
 print('')
 
@@ -160,6 +178,10 @@ if influx == "true":
 			"AC_Current": float(AC_Current),
 			"AC_Power": float(AC_Power),
 			"AC_Frequency": float(AC_Frequency),
+			"Power_Grid_Total_Power": float(Power_Grid_Total_Power),
+			"Total_On_grid_Generation": float(Total_On_grid_Generation),
+			"Total_Energy_Purchased": float(Total_Energy_Purchased),
+			"AC_Output_Total_Power": float(AC_Output_Total_Power),
 			"Inverter_Temperature": float(Inverter_Temperature),
 			"Daily_Generation": float(Daily_Generation),
 			"Monthly_Generation": float(Monthly_Generation),
@@ -167,6 +189,11 @@ if influx == "true":
 			"updateDate": int(updateDate),
 			"Total_Generation": float(Total_Generation),
 			"Generation_Last_Month": float(Generation_Last_Month),
+			"Consumption_Power": float(Consumption_Power),
+			"Consumption_Energy": float(Consumption_Energy),
+			"Daily_Energy_Used": float(Daily_Energy_Used), 
+			"Monthly_Energy_Used": float(Monthly_Energy_Used), 
+			"Annual_Energy_Used": float(Annual_Energy_Used),
 	        }
 	   } 
 	]
@@ -222,6 +249,10 @@ if mqtt == "true":
 	msgs.append((mqtt_topic + "AC_Current", float(AC_Current), 0, False))
 	msgs.append((mqtt_topic + "AC_Power", float(AC_Power), 0, False))
 	msgs.append((mqtt_topic + "AC_Frequency", float(AC_Frequency), 0, False))
+	msgs.append((mqtt_topic + "Power_Grid_Total_Power", float(Power_Grid_Total_Power), 0, False))
+	msgs.append((mqtt_topic + "Total_On_grid_Generation", float(Total_On_grid_Generation), 0, False))
+	msgs.append((mqtt_topic + "Total_Energy_Purchased", float(Total_Energy_Purchased), 0, False))
+	msgs.append((mqtt_topic + "AC_Output_Total_Power", float(AC_Output_Total_Power), 0, False))
 	msgs.append((mqtt_topic + "Inverter_Temperature", float(Inverter_Temperature), 0, False))
 	msgs.append((mqtt_topic + "Daily_Generation", float(Daily_Generation), 0, False))
 	msgs.append((mqtt_topic + "Monthly_Generation", float(Monthly_Generation), 0, False))
@@ -229,6 +260,11 @@ if mqtt == "true":
 	msgs.append((mqtt_topic + "updateDate", int(updateDate), 0, False))
 	msgs.append((mqtt_topic + "Total_Generation", float(Total_Generation), 0, False))
 	msgs.append((mqtt_topic + "Generation_Last_Month", float(Generation_Last_Month), 0, False))
+	msgs.append((mqtt_topic + "Consumption_Power", float(Consumption_Power), 0, False))
+	msgs.append((mqtt_topic + "Consumption_Energy", float(Consumption_Energy), 0, False))
+	msgs.append((mqtt_topic + "Daily_Energy_Used", float(Daily_Energy_Used), 0, False))
+	msgs.append((mqtt_topic + "Monthly_Energy_Used", float(Monthly_Energy_Used), 0, False))
+	msgs.append((mqtt_topic + "Annual_Energy_Used", float(Annual_Energy_Used), 0, False))
 	
 	publish.multiple(msgs, hostname=mqtt_server, auth={'username':mqtt_username, 'password':mqtt_password})
 
