@@ -111,7 +111,6 @@ DC_Power_PV2 = resultJson['result']['deviceWapper']['dataJSON'].get('1t')
 Power_Grid_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1bq')
 Total_On_grid_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bu')
 Total_Energy_Purchased = resultJson['result']['deviceWapper']['dataJSON'].get('1bv')
-AC_Output_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1ao')
 Inverter_Temperature = resultJson['result']['deviceWapper']['dataJSON'].get('1df')
 Daily_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bd')
 Monthly_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1be')
@@ -144,7 +143,6 @@ print 'DC_Power_PV2: ' + str(DC_Power_PV2)
 print 'Power_Grid_Total_Power: ' + str(Power_Grid_Total_Power)
 print 'Total_On_grid_Generation: ' + str(Total_On_grid_Generation)
 print 'Total_Energy_Purchased: ' + str(Total_Energy_Purchased)
-print 'AC_Output_Total_Power: ' + str(AC_Output_Total_Power)
 print 'Inverter_Temperature: ' + str(Inverter_Temperature)
 print 'Daily_Generation: ' + str(Daily_Generation)
 print 'Monthly_Generation: ' + str(Monthly_Generation)
@@ -181,7 +179,6 @@ if influx == "true":
 			"Power_Grid_Total_Power": float(Power_Grid_Total_Power),
 			"Total_On_grid_Generation": float(Total_On_grid_Generation),
 			"Total_Energy_Purchased": float(Total_Energy_Purchased),
-			"AC_Output_Total_Power": float(AC_Output_Total_Power),
 			"Inverter_Temperature": float(Inverter_Temperature),
 			"Daily_Generation": float(Daily_Generation),
 			"Monthly_Generation": float(Monthly_Generation),
@@ -252,7 +249,6 @@ if mqtt == "true":
 	msgs.append((mqtt_topic + "Power_Grid_Total_Power", float(Power_Grid_Total_Power), 0, False))
 	msgs.append((mqtt_topic + "Total_On_grid_Generation", float(Total_On_grid_Generation), 0, False))
 	msgs.append((mqtt_topic + "Total_Energy_Purchased", float(Total_Energy_Purchased), 0, False))
-	msgs.append((mqtt_topic + "AC_Output_Total_Power", float(AC_Output_Total_Power), 0, False))
 	msgs.append((mqtt_topic + "Inverter_Temperature", float(Inverter_Temperature), 0, False))
 	msgs.append((mqtt_topic + "Daily_Generation", float(Daily_Generation), 0, False))
 	msgs.append((mqtt_topic + "Monthly_Generation", float(Monthly_Generation), 0, False))
