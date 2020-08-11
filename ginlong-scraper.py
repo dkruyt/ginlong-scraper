@@ -3,10 +3,14 @@ import requests
 import urllib, urllib2
 import json
 import time
+from datetime import date 
+from datetime import timedelta 
+from datetime import datetime
+
 
 # solis/ginlong portal config
-username		= 'user@name' #your portal username
-password 		= 'password' #your portal password
+username		= '<--here data-->' #your portal username
+password 		= '<--here data-->' #your portal password
 domain 			= 'm.ginlong.com' #domain ginlong used multiple domains with same login but different versions, could change anytime. monitoring.csisolar.com, m.ginlong.com
 lan 			= '2' #lanuage (2 = English)
 deviceId        	= 'deviceid' # your deviceid, if set to deviceid it will try to auto detect, if you have more then one device then specify. 
@@ -15,18 +19,20 @@ deviceId        	= 'deviceid' # your deviceid, if set to deviceid it will try to
 
 # Influx settings
 influx 			= 'true' # output result to influx set to false if you dont want to use
-influx_database 	= 'dbname'
-influx_server 		= 'localhost'
+influx_database 	= '<--here data-->'
+influx_server 		= '<--here data-->
 influx_port 		= '8086'
-influx_measurement 	= 'PV'
-
+influx_measurement 	= '<--here data-->'
+db_username		= '<--here data-->'
+db_pasword		= '<--here data-->'
+			
 # pvoutput
-pvoutput 		= 'true' # output result to pvoutput set to false if you dont want to use
+pvoutput 		= 'false' # output result to pvoutput set to false if you dont want to use
 pvoutput_api 		= 'apikey'
 pvoutput_system 	= 'pvsystem'
 
 # MQTT
-mqtt 			= 'true' # output result to mqtt set to false if you dont want to use
+mqtt 			= 'false' # output result to mqtt set to false if you dont want to use
 mqtt_client 		= 'pv'
 mqtt_server 		= 'localhost'
 mqtt_username 		= 'username'
@@ -115,12 +121,27 @@ Annual_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bf')
 Total_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bc')
 Generation_Last_Month = resultJson['result']['deviceWapper']['dataJSON'].get('1ru')
 
-niceTimestamp = time.ctime((updateDate) / 1000)
+
+
+niceTimestamp = time.ctime((updateDate)/ 1000)
+date_of_last_parameters_insert = datetime.strptime(niceTimestamp, '%a %b %d %H:%M:%S %Y')
+today_day = int((date.today()).day)
+date_of_last_parameters_insert_day = int((date_of_last_parameters_insert).day)
+
+if today_day > date_of_last_parameters_insert_day:
+	Daily_Generation=str(0)
+	
+elif today_day == date_of_last_parameters_insert_day:
+	Daily_Generation=str(Daily_Generation)
+else:
+	print 'Daily_Generation is in impasible condition Today is older day than last log from server'
 
 # Print collected values
 print "results from",domain
 print('')
 print niceTimestamp
+print today_day
+print date_of_last_parameters_insert_day
 print('')
 print 'DC_Voltage_PV1: ' + str(DC_Voltage_PV1)
 print 'DC_Voltage_PV2: ' + str(DC_Voltage_PV2)
@@ -136,7 +157,7 @@ print 'Inverter_Temperature: ' + str(Inverter_Temperature)
 print "Daily_Generation: " + str(Daily_Generation)
 print "Monthly_Generation: " + str(Monthly_Generation)
 print "Annual_Generation: " + str(Annual_Generation)
-print "Total_Generation: " + str(Total_Generation)
+print "Total_Generation: elif" + str(Total_Generation)
 print "Generation_Last_Month: " + str(Generation_Last_Month)
 print('')
 print('')
@@ -165,13 +186,14 @@ if influx == "true":
 			"Monthly_Generation": float(Monthly_Generation),
 			"Annual_Generation": float(Annual_Generation),
 			"updateDate": int(updateDate),
-			"Total_Generation": float(Total_Generation),
-			"Generation_Last_Month": float(Generation_Last_Month),
+			"Total_Generation": str(Total_Generation),
+			"Generation_Last_Month": str(Generation_Last_Month),
+#			"Generation_Last_Month": float(Generation_Last_Month),
 	        }
 	   } 
 	]
 	
-	client = InfluxDBClient(host=influx_server, port=influx_port)
+	client = InfluxDBClient(host=influx_server, port=influx_port, username=db_username, password=db_pasword)
 	client.switch_database(influx_database)
 	success = client.write_points(json_body, time_precision='ms')
 	if not success:
