@@ -226,9 +226,9 @@ if mqtt == "true":
 	msgs.append((mqtt_topic + "Daily_Generation", float(Daily_Generation), 0, False))
 	msgs.append((mqtt_topic + "Monthly_Generation", float(Monthly_Generation), 0, False))
 	msgs.append((mqtt_topic + "Annual_Generation", float(Annual_Generation), 0, False))
-	msgs.append((mqtt_topic + "updateDate", int(updateDate), 0, False))
 	msgs.append((mqtt_topic + "Total_Generation", float(Total_Generation), 0, False))
 	msgs.append((mqtt_topic + "Generation_Last_Month", float(Generation_Last_Month), 0, False))
+	msgs.append((mqtt_topic + "updateDate", int(updateDate / 1000), 0, False))
 	
 	publish.multiple(msgs, hostname=mqtt_server, auth={'username':mqtt_username, 'password':mqtt_password})
 
