@@ -1,60 +1,52 @@
 # ginlong-scraper
 
-A python script that scrapes PV statistics from the Ginlong monitor pages and outputs it to influxdb, pvoutput or mqtt.
+Scrapes PV statistics from the Ginlong monitor pages and outputs it to influxdb, pvoutput or mqtt.
 
-Other then the Ginlong Solis inverter that I own. Possible it also works with the following inverters: Omnik Solar, Solarman and Trannergy Inverters
+https://hub.docker.com/repository/docker/dkruyt/ginlong-scraper
 
-## Install
+There is a possibility it also works with the following inverters: Omnik Solar, Solarman and Trannergy Inverters
 
-Install necessary python modules.
+You can also move the environment variables into an ENV file and invoke that on the commandline when 
+invoking the docker image.
 
-```
-pip install paho-mqtt
-pip install influxdb
-```
+In the case of two inverters (see note below) once you have the deviceid you can set up two seperate docker containers
+and just vary the deviceId in the environment variables.
 
-Adjust the config. Set the outputs that are not needed to false.
+## Configuration
 
-```
-# solis/ginlong portal config
-username		= 'user@name' #your portal username
-password 		= 'password' #your portal password
-domain 			= 'monitoring.csisolar.com' #domain ginlong used multiple domains with same login but different versions, could change anytime. monitoring.csisolar.com, m.ginlong.com
-lan 			= '2' #lanuage (2 = English)
-deviceId        	= 'deviceid' # your deviceid, if set to deviceid it will try to auto detect, if you have more then one device then specify.
+### Environment variables
 
-### Output ###
+| Environment variable      | Required | Description                                                                                          | Default value   |
+|---------------------------|----------|------------------------------------------------------------------------------------------------------|-----------------|
+| LOG_LEVEL                 | No       | Logging level (ERROR, INFO, DEBUG)                                                                   | `INFO`          |
+| GINLONG_USERNAME          | Yes      | Ginlong Solis username                                                                               | *empty*         |
+| GINLONG_PASSWORD          | Yes      | Ginlong Solis password                                                                               | *empty*         |
+| GINLONG_DOMAIN            | No       | Ginlong Solis domain                                                                                 | `m.ginlong.com` |
+| GINLONG_LANG              | No       | Ginlong Solis language                                                                               | `2` *(English)* |
+| GINLONG_DEVICE_ID         | No       | Ginlong Solis device ID<br/>(only required if auto-detect fails or if you have more than one device) | *empty*         |
+| USE_INFLUX                | No       | Set to true if you want to use InfluxDB as output                                                    | `false`         |
+| INFLUX_DATABASE           | No       | InfluxDB DB name                                                                                     | `influxdb`      |
+| INFLUX_SERVER             | No       | InfluxDB server                                                                                      | `localhost`     |
+| INFLUX_PORT               | No       | InfluxDB server port                                                                                 | `8086`          |
+| INFLUX_USER               | No       | InfluxDB User                                                                                        | *empty*         |
+| INFLUX_PASSWORD           | No       | InfluxDB Password                                                                                    | *empty*         |
+| INFLUX_MEASUREMENT        | No       | InfluxDB measurement type                                                                            | `PV`            |
+| USE_PVOUTPUT              | No       | Set to true if you want to use PvOutput as output                                                    | `false`         |
+| PVOUTPUT_API_KEY          | No       | PvOutput API key                                                                                     | *empty*         |
+| PVOUTPUT_SYSTEM_ID        | No       | PvOutput system ID                                                                                   | *empty*         |
+| USE_MQTT                  | No       | Set to true if you want to use MQTT as output                                                        | `false`         |
+| MQTT_CLIENT_ID            | No       | MQTT client ID                                                                                       | `pv`            |
+| MQTT_SERVER               | No       | MQTT server                                                                                          | `localhost`     |
+| MQTT_USERNAME             | No       | MQTT username                                                                                        | *empty*         |
+| MQTT_PASSWORD             | No       | MQTT password                                                                                        | *empty*         |
+| TZ                        | No       | TimeZone e.g Australia/Sydney                                                                        | *empty*         |
 
-# Influx settings
-influx 			= 'true' # output result to influx set to false if you dont want to use
-influx_database 	= 'dbname'
-influx_server 		= 'localhost'
-influx_port 		= '8086'
-influx_measurement 	= 'PV'
-
-# pvoutput
-pvoutput 		= 'true' # output result to pvoutput set to false if you dont want to use
-pvoutput_api 		= 'apikey'
-pvoutput_system 	= 'pvsystem'
-
-# MQTT
-mqtt 			= 'true' # output result to mqtt set to false if you dont want to use
-mqtt_client 		= 'pv'
-mqtt_server 		= 'localhost'
-mqtt_username 		= 'username'
-mqtt_password 		= 'password'
-
-###
-```
-
-Create a cron entry, every 5 min is ok, becuase the inverter logs also every 5 min.
-
-```
-*/5 *     * * *     user	/opt/solis-influx/ginlong-scraper.py > /dev/null 2>&1
-```
+Note that if you have more than 1 device - then it is not readily apparent where to get the Device ID
+In that case - setup the script, and set LOG_LEVEL to DEBUG, then view the logs and search for deviceId - 
+this will list the IDs of each inverter.
 
 ## Bonus
 
-The grafana-dashboard-example.json file you could import in to Grafana if you use the influx database. Then you can make a dashboard similar to this. 
+The grafana-dashboard-example.json file you could import in to Grafana if you use the influx database. Then you can make a dashboard similar to this.
 
 ![grafana](https://github.com/dkruyt/resources/raw/master/grafana-dashboard-ginlong-small.png)
