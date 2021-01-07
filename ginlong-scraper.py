@@ -8,6 +8,34 @@ import os
 import logging
 import schedule
 
+# Not all keys are avilable depending on your setup
+COLLECTED_DATA = {
+    'DC_Voltage_PV1': '1a', 
+    'DC_Voltage_PV2': '1b', 
+    'DC_Current1': '1j', 
+    'DC_Current2': '1k', 
+    'AC_Voltage': '1ah', 
+    'AC_Current': '1ak', 
+    'AC_Power': '1ao', 
+    'AC_Frequency': '1ar', 
+    'DC_Power_PV1': '1s', 
+    'DC_Power_PV2': '1t', 
+    'Inverter_Temperature': '1df', 
+    'Daily_Generation': '1bd', 
+    'Monthly_Generation': '1be', 
+    'Annual_Generation': '1bf', 
+    'Total_Generation': '1bc', 
+    'Generation_Last_Month': '1ru', 
+    'Power_Grid_Total_Power': '1bq', 
+    'Total_On_grid_Generation': '1bu', 
+    'Total_Energy_Purchased': '1bv', 
+    'Consumption_Power': '1cj', 
+    'Consumption_Energy': '1cn', 
+    'Daily_Energy_Used': '1co', 
+    'Monthly_Energy_Used': '1cp', 
+    'Annual_Energy_Used': '1cq', 
+    'Battery_Charge_Percent': '1cv'
+}
 
 def do_work():
     # solis/ginlong portal config
@@ -115,78 +143,18 @@ def do_work():
 
         # Get values from json
         updateDate = resultJson['result']['deviceWapper'].get('updateDate')
-        DC_Voltage_PV1 = resultJson['result']['deviceWapper']['dataJSON'].get('1a')
-        DC_Voltage_PV2 = resultJson['result']['deviceWapper']['dataJSON'].get('1b')
-        DC_Current1 = resultJson['result']['deviceWapper']['dataJSON'].get('1j')
-        DC_Current2 = resultJson['result']['deviceWapper']['dataJSON'].get('1k')
-        AC_Voltage = resultJson['result']['deviceWapper']['dataJSON'].get('1ah')
-        AC_Current = resultJson['result']['deviceWapper']['dataJSON'].get('1ak')
-        AC_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1ao')
-        AC_Frequency = resultJson['result']['deviceWapper']['dataJSON'].get('1ar')
-        DC_Power_PV1 = resultJson['result']['deviceWapper']['dataJSON'].get('1s')
-        DC_Power_PV2 = resultJson['result']['deviceWapper']['dataJSON'].get('1t')
-        Inverter_Temperature = resultJson['result']['deviceWapper']['dataJSON'].get('1df')
-        Daily_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bd')
-        Monthly_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1be')
-        Annual_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bf')
-        Total_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bc')
-        Generation_Last_Month = resultJson['result']['deviceWapper']['dataJSON'].get('1ru')
-        Power_Grid_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1bq')
-        Total_On_grid_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bu')
-        if Total_On_grid_Generation is None:
-            Total_On_grid_Generation = 0
-        Total_Energy_Purchased = resultJson['result']['deviceWapper']['dataJSON'].get('1bv')
-        if Total_Energy_Purchased is None:
-            Total_Energy_Purchased = 0
-        Consumption_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1cj')
-        if Consumption_Power is None:
-            Consumption_Power = 0
-        Consumption_Energy = resultJson['result']['deviceWapper']['dataJSON'].get('1cn')
-        if Consumption_Energy is None:
-            Consumption_Energy = 0
-        Daily_Energy_Used = resultJson['result']['deviceWapper']['dataJSON'].get('1co')
-        if Daily_Energy_Used is None:
-            Daily_Energy_Used = 0
-        Monthly_Energy_Used = resultJson['result']['deviceWapper']['dataJSON'].get('1cp')
-        if Monthly_Energy_Used is None:
-            Monthly_Energy_Used = 0
-        Annual_Energy_Used = resultJson['result']['deviceWapper']['dataJSON'].get('1cq')
-        if Annual_Energy_Used is None:
-            Annual_Energy_Used = 0
-        Battery_Charge_Percent = resultJson['result']['deviceWapper']['dataJSON'].get('1cv')
-        if Battery_Charge_Percent is None:
-            Battery_Charge_Percent = 0
-        niceTimestamp = time.ctime((updateDate) / 1000)
+        inverterData = {'updateDate': updateDate}
+        for name,code in COLLECTED_DATA.items():
+            inverterData[name] = 0
+            value = resultJson['result']['deviceWapper']['dataJSON'].get(code)
+            if value is not None:
+                inverterData[name] = float(value)
 
         # Print collected values
-        logging.debug('Results from %d:')
-        logging.debug('%s' % niceTimestamp)
-        logging.debug('DC_Voltage_PV1: %s' % str(DC_Voltage_PV1))
-        logging.debug('DC_Voltage_PV2: %s' % str(DC_Voltage_PV2))
-        logging.debug('DC_Current1: %s' % str(DC_Current1))
-        logging.debug('DC_Current2: %s' % str(DC_Current2))
-        logging.debug('AC_Voltage: %s' % str(AC_Voltage))
-        logging.debug('AC_Current: %s' % str(AC_Current))
-        logging.debug('AC_Power: %s' % str(AC_Power))
-        logging.debug('AC_Frequency: %s' % str(AC_Frequency))
-        logging.debug('DC_Power_PV1: %s' % str(DC_Power_PV1))
-        logging.debug('DC_Power_PV2: %s' % str(DC_Power_PV2))
-        logging.debug('Inverter_Temperature: %s' % str(Inverter_Temperature))
-        logging.debug('Daily_Generation: %s' % str(Daily_Generation))
-        logging.debug('Monthly_Generation: %s' % str(Monthly_Generation))
-        logging.debug('Annual_Generation: %s' % str(Annual_Generation))
-        logging.debug('Total_Generation: %s' % str(Total_Generation))
-        logging.debug('Generation_Last_Month: %s' % str(Generation_Last_Month))
-        logging.debug('Power_Grid_Total_Power: %s' % str(Power_Grid_Total_Power))
-        logging.debug('Total_On_grid_Generation: %s' % str(Total_On_grid_Generation))
-        logging.debug('Total_Energy_Purchased: %s' % str(Total_Energy_Purchased))
-        logging.debug('Consumption_Power: %s' % str(Consumption_Power))
-        logging.debug('Consumption_Energy: %s' % str(Consumption_Power)) 
-        logging.debug('Daily_Energy_Used: %s' % str(Daily_Energy_Used))
-        logging.debug('Monthly_Energy_Used: %s' % str(Monthly_Energy_Used))
-        logging.debug('Annual_Energy_Used: %s' % str(Annual_Energy_Used))
-        logging.debug('Battery_Charge_Percent: %s' % str(Battery_Charge_Percent))
-
+        logging.debug('Results from %s:' % deviceId)
+        logging.debug('%s' % time.ctime((updateDate) / 1000))
+        for key,value in inverterData.items():
+            logging.debug('%s: %s' % (key,value))
 
         # Write to Influxdb
         if influx.lower() == "true":
@@ -199,31 +167,7 @@ def do_work():
                         "deviceId": deviceId
                     },
                     "time": int(updateDate),
-                    "fields": {
-                        "DC_Voltage_PV1": float(DC_Voltage_PV1),
-                        "DC_Voltage_PV2": float(DC_Voltage_PV2),
-                        "DC_Current1": float(DC_Current1),
-                        "DC_Current2": float(DC_Current2),
-                        "AC_Voltage": float(AC_Voltage),
-                        "AC_Current": float(AC_Current),
-                        "AC_Power": float(AC_Power),
-                        "AC_Frequency": float(AC_Frequency),
-                        "Inverter_Temperature": float(Inverter_Temperature),
-                        "Daily_Generation": float(Daily_Generation),
-                        "Monthly_Generation": float(Monthly_Generation),
-                        "Annual_Generation": float(Annual_Generation),
-                        "updateDate": int(updateDate),
-                        "Total_Generation": float(Total_Generation),
-                        "Generation_Last_Month": float(Generation_Last_Month),
-			"Power_Grid_Total_Power": float(Power_Grid_Total_Power),
-			"Total_On_grid_Generation": float(Total_On_grid_Generation),
-			"Total_Energy_Purchased": float(Total_Energy_Purchased),
-			"Consumption_Power": float(Consumption_Power),
-			"Consumption_Energy": float(Consumption_Energy),
-			"Daily_Energy_Used": float(Daily_Energy_Used), 
-			"Monthly_Energy_Used": float(Monthly_Energy_Used), 
-			"Annual_Energy_Used": float(Annual_Energy_Used),
-                    }
+                    "fields": inverterData
                 }
             ]
             if influx_user != "" and influx_password != "":
@@ -256,11 +200,11 @@ def do_work():
             pvoutputdata = {
                     "d": date,
                     "t": hour,
-                    "v1": float(Daily_Generation) * 1000,
-                    "v2": float(AC_Power),
-                    "v3": float(Daily_Energy_Used) * 1000,
-                    "v4": float(Consumption_Power),
-                    "v6": float(AC_Voltage)
+                    "v1": inverterData['Daily_Generation'] * 1000,
+                    "v2": inverterData['AC_Power'],
+                    "v3": inverterData['Daily_Energy_Used'] * 1000,
+                    "v4": inverterData['Consumption_Power'],
+                    "v6": inverterData['AC_Voltage']
             }
 #Python3 change
             encoded = urllib.parse.urlencode(pvoutputdata)
@@ -283,31 +227,10 @@ def do_work():
                 auth_settings = {'username':mqtt_username, 'password':mqtt_password}
             else:
                 auth_settings = None
-
-            msgs.append((mqtt_topic + "DC_Voltage_PV1", float(DC_Voltage_PV1), 0, False))
-            msgs.append((mqtt_topic + "DC_Voltage_PV2", float(DC_Voltage_PV2), 0, False))
-            msgs.append((mqtt_topic + "DC_Current1", float(DC_Current1), 0, False))
-            msgs.append((mqtt_topic + "DC_Current2", float(DC_Current2), 0, False))
-            msgs.append((mqtt_topic + "AC_Voltage", float(AC_Voltage), 0, False))
-            msgs.append((mqtt_topic + "AC_Current", float(AC_Current), 0, False))
-            msgs.append((mqtt_topic + "AC_Power", float(AC_Power), 0, False))
-            msgs.append((mqtt_topic + "AC_Frequency", float(AC_Frequency), 0, False))
-            msgs.append((mqtt_topic + "Inverter_Temperature", float(Inverter_Temperature), 0, False))
-            msgs.append((mqtt_topic + "Daily_Generation", float(Daily_Generation), 0, False))
-            msgs.append((mqtt_topic + "Monthly_Generation", float(Monthly_Generation), 0, False))
-            msgs.append((mqtt_topic + "Annual_Generation", float(Annual_Generation), 0, False))
+            
             msgs.append((mqtt_topic + "updateDate", int(updateDate), 0, False))
-            msgs.append((mqtt_topic + "Total_Generation", float(Total_Generation), 0, False))
-            msgs.append((mqtt_topic + "Generation_Last_Month", float(Generation_Last_Month), 0, False))
-            msgs.append((mqtt_topic + "Power_Grid_Total_Power", float(Power_Grid_Total_Power), 0, False))
-            msgs.append((mqtt_topic + "Total_On_grid_Generation", float(Total_On_grid_Generation), 0, False))
-            msgs.append((mqtt_topic + "Total_Energy_Purchased", float(Total_Energy_Purchased), 0, False))
-            msgs.append((mqtt_topic + "Consumption_Power", float(Consumption_Power), 0, False))
-            msgs.append((mqtt_topic + "Consumption_Energy", float(Consumption_Energy), 0, False))
-            msgs.append((mqtt_topic + "Daily_Energy_Used", float(Daily_Energy_Used), 0, False))
-            msgs.append((mqtt_topic + "Monthly_Energy_Used", float(Monthly_Energy_Used), 0, False))
-            msgs.append((mqtt_topic + "Annual_Energy_Used", float(Annual_Energy_Used), 0, False))
-            msgs.append((mqtt_topic + "Battery_Charge_Percent", float(Battery_Charge_Percent), 0, False))
+            for key,value in inverterData.items():
+                msgs.append((mqtt_topic + key, value, 0, False))
             
             publish.multiple(msgs, hostname=mqtt_server, auth=auth_settings)
 
