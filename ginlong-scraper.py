@@ -133,6 +133,8 @@ def do_work():
         Generation_Last_Month = resultJson['result']['deviceWapper']['dataJSON'].get('1ru')
         Power_Grid_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1bq')
         Total_On_grid_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bu')
+	if Generation_Last_Month is None:
+            Generation_Last_Month = 0
         if Total_On_grid_Generation is None:
             Total_On_grid_Generation = 0
         Total_Energy_Purchased = resultJson['result']['deviceWapper']['dataJSON'].get('1bv')
