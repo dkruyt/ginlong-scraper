@@ -133,7 +133,7 @@ def do_work():
         Generation_Last_Month = resultJson['result']['deviceWapper']['dataJSON'].get('1ru')
         Power_Grid_Total_Power = resultJson['result']['deviceWapper']['dataJSON'].get('1bq')
         Total_On_grid_Generation = resultJson['result']['deviceWapper']['dataJSON'].get('1bu')
-	if Generation_Last_Month is None:
+        if Generation_Last_Month is None:
             Generation_Last_Month = 0
         if Total_On_grid_Generation is None:
             Total_On_grid_Generation = 0
@@ -217,14 +217,14 @@ def do_work():
                         "updateDate": int(updateDate),
                         "Total_Generation": float(Total_Generation),
                         "Generation_Last_Month": float(Generation_Last_Month),
-			"Power_Grid_Total_Power": float(Power_Grid_Total_Power),
-			"Total_On_grid_Generation": float(Total_On_grid_Generation),
-			"Total_Energy_Purchased": float(Total_Energy_Purchased),
-			"Consumption_Power": float(Consumption_Power),
-			"Consumption_Energy": float(Consumption_Energy),
-			"Daily_Energy_Used": float(Daily_Energy_Used), 
-			"Monthly_Energy_Used": float(Monthly_Energy_Used), 
-			"Annual_Energy_Used": float(Annual_Energy_Used),
+            "Power_Grid_Total_Power": float(Power_Grid_Total_Power),
+            "Total_On_grid_Generation": float(Total_On_grid_Generation),
+            "Total_Energy_Purchased": float(Total_Energy_Purchased),
+            "Consumption_Power": float(Consumption_Power),
+            "Consumption_Energy": float(Consumption_Energy),
+            "Daily_Energy_Used": float(Daily_Energy_Used), 
+            "Monthly_Energy_Used": float(Monthly_Energy_Used), 
+            "Annual_Energy_Used": float(Annual_Energy_Used),
                     }
                 }
             ]
