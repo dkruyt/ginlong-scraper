@@ -145,7 +145,7 @@ def do_work():
         updateDate = resultJson['result']['deviceWapper'].get('updateDate')
         inverterData = {'updateDate': updateDate}
         for name,code in COLLECTED_DATA.items():
-            inverterData[name] = 0
+            inverterData[name] = float(0)
             value = resultJson['result']['deviceWapper']['dataJSON'].get(code)
             if value is not None:
                 inverterData[name] = float(value)
