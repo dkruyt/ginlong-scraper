@@ -51,5 +51,6 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ginlong-scraper.py ./
+COPY logging_config.ini ./
 
 CMD [ "python", "./ginlong-scraper.py" ]

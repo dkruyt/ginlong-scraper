@@ -6,6 +6,7 @@ import datetime
 import time
 import os
 import logging
+import logging.config
 import schedule
 
 # Not all keys are avilable depending on your setup
@@ -247,15 +248,9 @@ def main():
 global next_run_yes
 
 get_loglevel = os.environ['LOG_LEVEL']
-loglevel = logging.INFO
-if get_loglevel.lower() == "info":
-    loglevel = logging.INFO
-elif get_loglevel.lower() == "error":
-    loglevel = logging.ERROR
-elif get_loglevel.lower() == "debug":
-    loglevel = logging.DEBUG
+loglevel = get_loglevel.upper()
 
-logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s %(message)s')
+logging.config.fileConfig('logging_config.ini', defaults={'loglevel': loglevel})
 logging.info('Started ginlong-solis-scraper')
 
 schedule.every(5).minutes.at(':00').do(main).run()
