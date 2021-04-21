@@ -7,6 +7,7 @@ import time
 import os
 import logging
 import schedule
+from sys import argv
 
 # Not all keys are avilable depending on your setup
 COLLECTED_DATA = {
@@ -258,11 +259,14 @@ elif get_loglevel.lower() == "debug":
 logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s %(message)s')
 logging.info('Started ginlong-solis-scraper')
 
-schedule.every(5).minutes.at(':00').do(main).run()
-while True:
-    if next_run_yes == 1:
-        next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
-        logging.info('Next run is scheduled at %s' % next_run)
-        next_run_yes = 0
-    schedule.run_pending()
-    time.sleep(1)
+if argv[1:] == ['--once']:
+    main()
+else:
+    schedule.every(5).minutes.at(':00').do(main).run()
+    while True:
+        if next_run_yes == 1:
+            next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
+            logging.info('Next run is scheduled at %s' % next_run)
+            next_run_yes = 0
+        schedule.run_pending()
+        time.sleep(1)
