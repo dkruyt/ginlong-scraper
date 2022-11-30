@@ -93,7 +93,7 @@ def do_work():
     # login call
     loginSuccess = False
     try:
-        resultData = session.post(url, data=params, headers=headers)
+        resultData = session.post(url, data=params, headers=headers, timeout=10)
         resultJson = resultData.json()
         if resultJson.get('result') and resultJson.get('result').get('isAccept', 0) == 1:
             loginSuccess = True
@@ -110,7 +110,7 @@ def do_work():
             url = 'http://'+domain+'/cpro/epc/plantview/view/doPlantList.json'
 
             cookies = {'language': lan}
-            resultData = session.get(url, cookies=cookies, headers=headers)
+            resultData = session.get(url, cookies=cookies, headers=headers, timeout=10)
             resultJson = resultData.json()
 
             plantId = resultJson['result']['pagination']['data'][0]['plantId']
@@ -121,7 +121,7 @@ def do_work():
             }
 
             cookies = {'language': lan}
-            resultData = session.get(url, params=params, cookies=cookies, headers=headers)
+            resultData = session.get(url, params=params, cookies=cookies, headers=headers, timeout=10)
             resultJson = resultData.json()
             logging.debug('Ginlong inverter list: %s' % json.dumps(resultJson))
 
