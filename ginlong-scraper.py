@@ -7,19 +7,34 @@ import time
 import os
 import logging
 import schedule
+import base64
+import hashlib
+import hmac
+import json
+import time
+import sys
+import configparser
+import socket
+import traceback
+import logging
+import logging.config
+
+from datetime import datetime, timezone
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen, Request
 
 # Not all keys are avilable depending on your setup
 COLLECTED_DATA = {
-    'DC_Voltage_PV1': '1a', 
-    'DC_Voltage_PV2': '1b', 
-    'DC_Voltage_PV3': '1c', 
-    'DC_Voltage_PV4': '1d', 
-    'DC_Current1': '1j', 
-    'DC_Current2': '1k', 
-    'DC_Current3': '1l', 
-    'DC_Current4': '1m', 
-    'AC_Voltage': '1ah', 
-    'AC_Current': '1ak', 
+    'DC_Voltage_PV1': '1a', #
+    'DC_Voltage_PV2': '1b', #
+    'DC_Voltage_PV3': '1c', #
+    'DC_Voltage_PV4': '1d', #
+    'DC_Current1': '1j', #
+    'DC_Current2': '1k', #
+    'DC_Current3': '1l', #
+    'DC_Current4': '1m', #
+    'AC_Voltage': '1ah', #
+    'AC_Current': '1ak', #
     'AC_Power': '1ao', 
     'AC_Frequency': '1ar', 
     'DC_Power_PV1': '1s', 
@@ -32,9 +47,9 @@ COLLECTED_DATA = {
     'Annual_Generation': '1bf', 
     'Total_Generation': '1bc', 
     'Generation_Last_Month': '1ru', 
-    'Power_Grid_Total_Power': '1bq', 
+    'Power_Grid_Total_Power': '1bq', #
     'Total_On_grid_Generation': '1bu', 
-    'Total_Energy_Purchased': '1bv', 
+    'Total_Energy_Purchased': '1bv', #
     'Consumption_Power': '1cj', 
     'Consumption_Energy': '1cn', 
     'Daily_Energy_Used': '1co', 
@@ -44,124 +59,143 @@ COLLECTED_DATA = {
 }
 
 def do_work():
-    # solis/ginlong portal config
-    username        = os.environ['GINLONG_USERNAME']
-    password        = os.environ['GINLONG_PASSWORD']
-    domain          = os.environ['GINLONG_DOMAIN']
-    lan             = os.environ['GINLONG_LANG']
-    deviceId        = os.environ['GINLONG_DEVICE_ID']
+    # solis cloud api config
+    api_key_id      = ""#os.environ['SOLIS_CLOUD_API_KEY_ID']
+    api_key_pw      = "".encode("utf-8")#os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
+    domain          = "https://www.soliscloud.com"#os.environ['SOLIS_CLOUD_API_URL']
+    port            = "13333"#os.environ['SOLIS_CLOUD_API_PORT']
+    url             = "{}:{}".format(domain,port)
+    #lan             = os.environ['GINLONG_LANG']
+    deviceId        = 0#os.environ['SOLIS_CLOUD_API_INVERTER_ID']
+
+    # == Constants ===============================================================
+    VERB = "POST"
+    CONTENT_TYPE = "application/json"
+    USER_STATION_LIST = "/v1/api/userStationList"
+    INVERTER_LIST = "/v1/api/inverterList"
+    INVERTER_DETAIL = "/v1/api/inverterDetail"
+
+    TODAY = datetime.now().strftime("%Y%m%d")  # format yyyymmdd
 
     ### Output ###
 
     # Influx settings
-    influx              = os.environ['USE_INFLUX']
-    influx_database     = os.environ['INFLUX_DATABASE']
-    influx_server       = os.environ['INFLUX_SERVER']
-    influx_port         = os.environ['INFLUX_PORT']
-    influx_user         = os.environ['INFLUX_USER']
-    influx_password     = os.environ['INFLUX_PASSWORD']
-    influx_measurement  = os.environ['INFLUX_MEASUREMENT']
+    influx              = ""#os.environ['USE_INFLUX']
+    influx_database     = ""#os.environ['INFLUX_DATABASE']
+    influx_server       = ""#os.environ['INFLUX_SERVER']
+    influx_port         = ""#os.environ['INFLUX_PORT']
+    influx_user         = ""#os.environ['INFLUX_USER']
+    influx_password     = ""#os.environ['INFLUX_PASSWORD']
+    influx_measurement  = ""#os.environ['INFLUX_MEASUREMENT']
 
     # pvoutput
-    pvoutput            = os.environ['USE_PVOUTPUT']
-    pvoutput_api        = os.environ['PVOUTPUT_API_KEY']
-    pvoutput_system     = os.environ['PVOUTPUT_SYSTEM_ID']
+    pvoutput            = ""#os.environ['USE_PVOUTPUT']
+    pvoutput_api        = ""#os.environ['PVOUTPUT_API_KEY']
+    pvoutput_system     = ""#os.environ['PVOUTPUT_SYSTEM_ID']
 
     # MQTT
-    mqtt                = os.environ['USE_MQTT']
-    mqtt_client         = os.environ['MQTT_CLIENT_ID']
-    mqtt_server         = os.environ['MQTT_SERVER']
-    mqtt_username       = os.environ['MQTT_USERNAME']
-    mqtt_password       = os.environ['MQTT_PASSWORD']
+    mqtt                = ""#os.environ['USE_MQTT']
+    mqtt_client         = ""#os.environ['MQTT_CLIENT_ID']
+    mqtt_server         = ""#os.environ['MQTT_SERVER']
+    mqtt_username       = ""#os.environ['MQTT_USERNAME']
+    mqtt_password       = ""#os.environ['MQTT_PASSWORD']
 
     ###
 
-    if username == "" or password == "":
-        logging.error('Username and password are mandatory for Ginlong Solis')
-        return
-
-    # Create session for requests
-    session = requests.session()
-
-    # building url
-    url = 'https://'+domain+'/cpro/login/validateLogin.json'
-    params = {
-        "userName": username,
-        "password": password,
-        "lan": lan,
-        "domain": domain,
-        "userType": "C"
-    }
-
-    # default heaeders gives a 403, seems releted to the request user agent, so we put curl here
-    headers = {'User-Agent': 'curl/7.58.0'}
-
-    # login call
-    loginSuccess = False
-    try:
-        resultData = session.post(url, data=params, headers=headers)
-        resultJson = resultData.json()
-        if resultJson.get('result') and resultJson.get('result').get('isAccept', 0) == 1:
-            loginSuccess = True
-            logging.info('Login successful for %s' % domain)
+    # == post ====================================================================
+    def execute_request(url, data, headers) -> str:
+        """execute request and handle errors"""
+        if data != "":
+            post_data = data.encode("utf-8")
+            request = Request(url, data=post_data, headers=headers)
         else:
-            raise Exception(json.dumps(resultJson))
-    except Exception as e:
-        logging.debug(e)
-        logging.error('Login failed for %s' % domain)
+            request = Request(url)
+        errorstring = ""
+        try:
+            with urlopen(request, timeout=30) as response:
+                body = response.read()
+                content = body.decode("utf-8")
+                logging.debug(content)
+                return content
+        except HTTPError as error:
+            errorstring = str(error.status) + ": " + error.reason
+        except URLError as error:
+            errorstring = str(error.reason)
+        except TimeoutError:
+            errorstring = "Request timed out"
+        except socket.timeout:
+            errorstring = "Socket timed out"
+        except Exception as ex:  # pylint: disable=broad-except
+            errorstring = "urlopen exception: " + str(ex)
+            traceback.print_exc()
 
-    if loginSuccess:
-        if deviceId == "":
-            logging.info('Your deviceId is not set, auto detecting')
-            url = 'http://'+domain+'/cpro/epc/plantview/view/doPlantList.json'
+        logging.error(url + " -> " + errorstring)
+        time.sleep(60)  # retry after 1 minute
+        return "ERROR"
 
-            cookies = {'language': lan}
-            resultData = session.get(url, cookies=cookies, headers=headers)
-            resultJson = resultData.json()
-
-            plantId = resultJson['result']['pagination']['data'][0]['plantId']
-
-            url = 'http://'+domain+'/cpro/epc/plantDevice/inverterListAjax.json?'
-            params = {
-                'plantId': int(plantId)
+    # == get_solis_cloud_data ====================================================
+    def get_solis_cloud_data(url_part, data) -> str:
+        """get solis cloud data"""
+        md5 = base64.b64encode(hashlib.md5(data.encode("utf-8")).digest()).decode("utf-8")
+        while True:
+            now = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+            encrypt_str = (
+                    VERB + "\n" + md5 + "\n" + CONTENT_TYPE + "\n" + now + "\n" + url_part
+            )
+            hmac_obj = hmac.new(
+                api_key_pw,
+                msg=encrypt_str.encode("utf-8"),
+                digestmod=hashlib.sha1,
+            )
+            authorization = (
+                    "API "
+                    + api_key_id
+                    + ":"
+                    + base64.b64encode(hmac_obj.digest()).decode("utf-8")
+            )
+            headers = {
+                "Content-MD5": md5,
+                "Content-Type": CONTENT_TYPE,
+                "Date": now,
+                "Authorization": authorization,
             }
+            content = execute_request(url + url_part, data, headers)
+            # log(SOLISCLOUD_API_URL+url_part + "->" + content)
+            if content != "ERROR":
+                return content
 
-            cookies = {'language': lan}
-            resultData = session.get(url, params=params, cookies=cookies, headers=headers)
-            resultJson = resultData.json()
-            logging.debug('Ginlong inverter list: %s' % json.dumps(resultJson))
+    # == get_inverter_list_body ==================================================
+    def get_inverter_list_body() -> str:
+        """get inverter list body"""
+        body = '{"userid":"' + api_key_id + '"}'
+        content = get_solis_cloud_data(USER_STATION_LIST, body)
+        station_info = json.loads(content)["data"]["page"]["records"][0]
+        station_id = station_info["id"]
 
-            # .result.paginationAjax.data
-            deviceId = resultJson['result']['paginationAjax']['data'][0]['deviceId']
+        body = '{"stationId":"' + station_id + '"}'
+        content = get_solis_cloud_data(INVERTER_LIST, body)
+        inverter_info = json.loads(content)["data"]["page"]["records"][
+            deviceId
+        ]
+        inverter_id = inverter_info["id"]
+        inverter_sn = inverter_info["sn"]
 
-            logging.info('Your deviceId is %s' % deviceId)
+        body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
+        logging.info("body: %s", body)
+        return body
 
-        # get device details
-        url = 'http://'+domain+'/cpro/device/inverter/goDetailAjax.json'
-        params = {
-            'deviceId': int(deviceId)
-        }
+    # == MAIN ====================================================================
+    def get_inverter_data():
+        inverter_detail_body = get_inverter_list_body()
 
-        cookies = {'language': lan}
-        resultData = session.get(url, params=params, cookies=cookies, headers=headers)
-        resultJson = resultData.json()
-        logging.debug('Ginlong device details: %s' % json.dumps(resultJson))
+        content = get_solis_cloud_data(INVERTER_DETAIL, inverter_detail_body)
+        inverter_detail = json.loads(content)["data"]
+        json_formatted_str = json.dumps(inverter_detail, indent=2)
+        print(json_formatted_str)
 
-        # Get values from json
-        updateDate = resultJson['result']['deviceWapper'].get('updateDate')
-        inverterData = {'updateDate': updateDate}
-        for name,code in COLLECTED_DATA.items():
-            inverterData[name] = float(0)
-            value = resultJson['result']['deviceWapper']['dataJSON'].get(code)
-            if value is not None:
-                inverterData[name] = float(value)
+        return inverter_detail
 
-        # Print collected values
-        logging.debug('Results from %s:' % deviceId)
-        logging.debug('%s' % time.ctime((updateDate) / 1000))
-        for key,value in inverterData.items():
-            logging.debug('%s: %s' % (key,value))
-
+    def writeToInfluxDb(inverterData, updateDate):
         # Write to Influxdb
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
@@ -177,15 +211,17 @@ def do_work():
                 }
             ]
             if influx_user != "" and influx_password != "":
-                client = InfluxDBClient(host=influx_server, port=influx_port, username=influx_user, password=influx_password )
+                client = InfluxDBClient(host=influx_server, port=influx_port, username=influx_user,
+                                        password=influx_password)
             else:
                 client = InfluxDBClient(host=influx_server, port=influx_port)
-            
+
             client.switch_database(influx_database)
             success = client.write_points(json_body, time_precision='ms')
             if not success:
                 logging.error('Error writing to influx database')
 
+    def writeToPVOutput(inverterData, updateDate):
         # Write to PVOutput
         if pvoutput.lower() == "true":
             logging.info('PvOutput output is enabled, posting results now...')
@@ -204,22 +240,24 @@ def do_work():
             hour = time.strftime("%H:%M", tuple_time)
 
             pvoutputdata = {
-                    "d": date,
-                    "t": hour,
-                    "v1": inverterData['Daily_Generation'] * 1000,
-                    "v2": inverterData['AC_Power'],
-                    "v3": inverterData['Daily_Energy_Used'] * 1000,
-                    "v4": inverterData['Consumption_Power'],
-                    "v6": inverterData['AC_Voltage']
+                "d": date,
+                "t": hour,
+                "v1": inverterData['Daily_Generation'] * 1000,
+                "v2": inverterData['AC_Power'],
+                "v3": inverterData['Daily_Energy_Used'] * 1000,
+                "v4": inverterData['Consumption_Power'],
+                "v6": inverterData['AC_Voltage']
             }
-#Python3 change
+            # Python3 change
             encoded = urllib.parse.urlencode(pvoutputdata)
 
-            pvoutput_result = requests.post("http://pvoutput.org/service/r2/addstatus.jsp", data=encoded, headers=headers)
+            pvoutput_result = requests.post("http://pvoutput.org/service/r2/addstatus.jsp", data=encoded,
+                                            headers=headers)
             logging.debug('PvOutput response: %s' % pvoutput_result.content)
             if pvoutput_result.status_code != 200:
                 logging.error('Error posting to PvOutput')
 
+    def writeToMqtt(inverterData, updateDate):
         # Push to MQTT
         if mqtt.lower() == "true":
             logging.info('MQTT output is enabled, posting results now...')
@@ -227,18 +265,33 @@ def do_work():
             import paho.mqtt.publish as publish
             msgs = []
 
-            mqtt_topic = ''.join([mqtt_client, "/" ])   # Create the topic base using the client_id and serial number
+            mqtt_topic = ''.join([mqtt_client, "/"])  # Create the topic base using the client_id and serial number
 
             if (mqtt_username != "" and mqtt_password != ""):
-                auth_settings = {'username':mqtt_username, 'password':mqtt_password}
+                auth_settings = {'username': mqtt_username, 'password': mqtt_password}
             else:
                 auth_settings = None
-            
+
             msgs.append((mqtt_topic + "updateDate", int(updateDate), 0, False))
-            for key,value in inverterData.items():
+            for key, value in inverterData.items():
                 msgs.append((mqtt_topic + key, value, 0, False))
-            
+
             publish.multiple(msgs, hostname=mqtt_server, auth=auth_settings)
+
+    if api_key_id == "" or api_key_pw == "":
+        logging.error('Key ID and secret are mandatory for Solis Cloud API')
+        return
+
+    # download data
+    inverter_detail_body = get_inverter_list_body()
+    content = get_solis_cloud_data(INVERTER_DETAIL, inverter_detail_body)
+    inverter_detail = json.loads(content)["data"]
+    timestamp_current = inverter_detail["dataTimestamp"]
+
+    # push to database
+    json_formatted_str = json.dumps(inverter_detail, indent=2)
+    print(json_formatted_str)
+
 
 
 def main():
@@ -252,7 +305,7 @@ def main():
 
 global next_run_yes
 
-get_loglevel = os.environ['LOG_LEVEL']
+get_loglevel = "debug"#os.environ['LOG_LEVEL']
 loglevel = logging.INFO
 if get_loglevel.lower() == "info":
     loglevel = logging.INFO
@@ -264,7 +317,8 @@ elif get_loglevel.lower() == "debug":
 logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s %(message)s')
 logging.info('Started ginlong-solis-scraper')
 
-schedule.every(5).minutes.at(':00').do(main).run()
+schedule.every(1).minutes.at(':00').do(main).run()
+#schedule.every(5).minutes.at(':00').do(main).run()
 while True:
     if next_run_yes == 1:
         next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
