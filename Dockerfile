@@ -4,24 +4,30 @@ ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 
-LABEL maintainer="dkruyt" \
+LABEL maintainer="Gentleman1983, TobiO79" \
   org.opencontainers.image.created=$BUILD_DATE \
-  org.opencontainers.image.url="https://github.com/dkruyt/ginlong-solis-scraper" \
-  org.opencontainers.image.source="https://github.com/dkruyt/ginlong-solis-scraper" \
+  org.opencontainers.image.url="https://github.com/Gentleman1983/ginlong-scraper" \
+  org.opencontainers.image.source="https://github.com/Gentleman1983/ginlong-scraper" \
   org.opencontainers.image.version=$VERSION \
   org.opencontainers.image.revision=$VCS_REF \
-  org.opencontainers.image.vendor="dkruyt" \
-  org.opencontainers.image.title="ginlong-solis-scraper" \
-  org.opencontainers.image.description="Scrapes PV statistics from the Ginlong monitor pages and outputs it to influxdb, pvoutput or mqtt" \
+  org.opencontainers.image.vendor="Gentleman1983" \:13333
+  org.opencontainers.image.title="ginlong-solis-api-connector" \
+  org.opencontainers.image.description="Fetches API data from Solis Cloud API and outputs it to influxdb, pvoutput or mqtt" \
   org.opencontainers.image.licenses="GPL-3.0"
 
 ENV LOG_LEVEL="INFO"
 
-ENV GINLONG_USERNAME=""
-ENV GINLONG_PASSWORD=""
-ENV GINLONG_DOMAIN="m.ginlong.com"
-ENV GINLONG_LANG="2"
-ENV GINLONG_DEVICE_ID=""
+ENV SOLIS_CLOUD_API_KEY_ID = ""
+ENV SOLIS_CLOUD_API_KEY_SECRET = ""
+ENV SOLIS_CLOUD_API_URL = "https://www.soliscloud.com"
+ENV SOLIS_CLOUD_API_PORT = "13333"
+ENV SOLIS_CLOUD_API_INVERTER_ID = ""
+
+#ENV GINLONG_USERNAME=""
+#ENV GINLONG_PASSWORD=""
+#ENV GINLONG_DOMAIN="m.ginlong.com"
+#ENV GINLONG_LANG="2"
+#ENV GINLONG_DEVICE_ID=""
 
 ENV USE_INFLUX="false"
 ENV INFLUX_DATABASE="influxdb"
