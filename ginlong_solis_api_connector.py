@@ -6,17 +6,17 @@ import hmac
 import json
 import logging
 import logging.config
-import requests
 import urllib
-import schedule
 import socket
 import time
 import traceback
-
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
 from urllib.request import urlopen, Request
+import requests
+import schedule
+from urllib.parse import urlencode
+
 
 # Not all keys are available depending on your setup
 COLLECTED_DATA = {
