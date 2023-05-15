@@ -160,7 +160,7 @@ def do_work():
                 "Authorization": authorization,
             }
             content = execute_request(url + url_part, data, headers)
-            # log(SOLISCLOUD_API_URL+url_part + "->" + content)
+            logging.debug(url+url_part + "->" + content)
             if content != "ERROR":
                 return content
 
