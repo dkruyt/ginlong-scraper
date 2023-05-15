@@ -101,20 +101,20 @@ def do_work():
         return json.dumps(json.loads(input_json), indent=2)
 
     # == post ====================================================================
-    def execute_request(url, data, headers) -> str:
+    def execute_request(target_url, data, headers) -> str:
         """execute request and handle errors"""
         if data != "":
             post_data = data.encode("utf-8")
-            request = Request(url, data=post_data, headers=headers)
+            request = Request(target_url, data=post_data, headers=headers)
         else:
-            request = Request(url)
+            request = Request(target_url)
         error_string = ""
         try:
             with urlopen(request, timeout=30) as response:
                 body = response.read()
-                content = body.decode("utf-8")
-                logging.debug("Decoded content: " + content)
-                return content
+                body_content = body.decode("utf-8")
+                logging.debug("Decoded content: " + body_content)
+                return body_content
         except HTTPError as error:
             error_string = str(error.status) + ": " + error.reason
         except URLError as error:
@@ -127,7 +127,7 @@ def do_work():
             error_string = "urlopen exception: " + str(ex)
             traceback.print_exc()
 
-        logging.error(url + " -> " + error_string)
+        logging.error(target_url + " -> " + error_string)
         time.sleep(60)  # retry after 1 minute
         return "ERROR"
 
@@ -157,22 +157,22 @@ def do_work():
                 "Date": now,
                 "Authorization": authorization,
             }
-            content = execute_request(url + url_part, data, headers)
-            logging.debug(url + url_part + "->" + prettify_json(content))
-            if content != "ERROR":
-                return content
+            data_content = execute_request(url + url_part, data, headers)
+            logging.debug(url + url_part + "->" + prettify_json(data_content))
+            if data_content != "ERROR":
+                return data_content
 
     # == get_inverter_list_body ==================================================
     def get_inverter_list_body() -> str:
         """get inverter list body"""
         body = '{"userid":"' + api_key_id + '"}'
-        content = get_solis_cloud_data(endpoint_station_list, body)
-        station_info = json.loads(content)["data"]["page"]["records"][0]
+        data_content = get_solis_cloud_data(endpoint_station_list, body)
+        station_info = json.loads(data_content)["data"]["page"]["records"][0]
         station_id = station_info["id"]
 
         body = '{"stationId":"' + station_id + '"}'
-        content = get_solis_cloud_data(endpoint_inverter_list, body)
-        inverter_info = json.loads(content)["data"]["page"]["records"][
+        data_content = get_solis_cloud_data(endpoint_inverter_list, body)
+        inverter_info = json.loads(data_content)["data"]["page"]["records"][
             device_id
         ]
         inverter_id = inverter_info["id"]
@@ -184,12 +184,12 @@ def do_work():
 
     # == MAIN ====================================================================
     def get_inverter_data():
-        inverter_detail_body = get_inverter_list_body()
+        inverter_list_body = get_inverter_list_body()
 
-        content = get_solis_cloud_data(endpoint_inverter_detail, inverter_detail_body)
-        inverter_detail = json.loads(content)["data"]
+        data_content = get_solis_cloud_data(endpoint_inverter_detail, inverter_list_body)
+        inverter_detail_data = json.loads(data_content)["data"]
 
-        return inverter_detail
+        return inverter_detail_data
 
     def write_to_influx_db(inverter_data, update_date):
         # Write to Influxdb
