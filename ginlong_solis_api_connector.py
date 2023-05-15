@@ -64,7 +64,7 @@ def do_work():
     api_key_pw = "".encode("utf-8")  # os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
     domain = "https://www.soliscloud.com"  # os.environ['SOLIS_CLOUD_API_URL']
     port = "13333"  # os.environ['SOLIS_CLOUD_API_PORT']
-    url = "{}:{}".format(domain, port)
+    url = f'{domain}:{port}'
     # lan = os.environ['GINLONG_LANG']
     device_id = 0  # os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
