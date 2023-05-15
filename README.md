@@ -1,6 +1,6 @@
-# ginlong-scraper
+# ginlong-solis-api-connector
 
-Scrapes PV statistics from the Ginlong monitor pages and outputs it to influxdb, pvoutput or mqtt.
+Fetches API data from Solis Cloud API and outputs it to influxdb, pvoutput or mqtt. Based on [ginlong-scraper by dkruyt](https://github.com/dkruyt/ginlong-scraper).
 
 https://hub.docker.com/repository/docker/dkruyt/ginlong-scraper
 
@@ -11,6 +11,10 @@ invoking the docker image.
 
 In the case of two inverters (see note below) once you have the deviceid you can set up two seperate docker containers
 and just vary the deviceId in the environment variables.
+
+## Requirements
+* You have to order the Solis Cloud API access like described [here](https://solis-service.solisinverters.com/support/solutions/articles/44002212561-api-access-soliscloud).
+* You have to know the Solis Cloud API `KeyID` and `KeySecret`.
 
 ## Configuration
 
@@ -42,11 +46,11 @@ and just vary the deviceId in the environment variables.
 | TZ                        | No       | TimeZone e.g Australia/Sydney                                                                        | *empty*         |
 
 Note that if you have more than 1 device - then it is not readily apparent where to get the Device ID
-In that case - setup the script, and set LOG_LEVEL to DEBUG, then view the logs and search for deviceId - 
+In that case - setup the script, and set `LOG_LEVEL` to `DEBUG`, then view the logs and search for deviceId - 
 this will list the IDs of each inverter.
 
 ## Bonus
 
 The grafana-dashboard-example.json file you could import in to Grafana if you use the influx database. Then you can make a dashboard similar to this.
 
-![grafana](https://github.com/dkruyt/resources/raw/master/grafana-dashboard-ginlong-small.png)
+![grafana](https://github.com/Gentleman1983/resources/raw/master/grafana-dashboard-ginlong-small.png)
