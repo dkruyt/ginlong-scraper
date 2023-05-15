@@ -60,7 +60,7 @@ def do_work():
     port            = "13333"#os.environ['SOLIS_CLOUD_API_PORT']
     url             = "{}:{}".format(domain,port)
     #lan             = os.environ['GINLONG_LANG']
-    deviceId        = 0#os.environ['SOLIS_CLOUD_API_INVERTER_ID']
+    device_id       = 0#os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
     # == Constants ===============================================================
     VERB = "POST"
@@ -173,7 +173,7 @@ def do_work():
         body = '{"stationId":"' + station_id + '"}'
         content = get_solis_cloud_data(INVERTER_LIST, body)
         inverter_info = json.loads(content)["data"]["page"]["records"][
-            deviceId
+            device_id
         ]
         inverter_id = inverter_info["id"]
         inverter_sn = inverter_info["sn"]
@@ -191,7 +191,7 @@ def do_work():
 
         return inverter_detail
 
-    def writeToInfluxDb(inverterData, updateDate):
+    def write_to_influx_db(inverter_data, update_date):
         # Write to Influxdb
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
@@ -200,10 +200,10 @@ def do_work():
                 {
                     "measurement": influx_measurement,
                     "tags": {
-                        "deviceId": deviceId
+                        "deviceId": device_id
                     },
-                    "time": int(updateDate),
-                    "fields": inverterData
+                    "time": int(update_date),
+                    "fields": inverter_data
                 }
             ]
             if influx_user != "" and influx_password != "":
@@ -217,7 +217,7 @@ def do_work():
             if not success:
                 logging.error('Error writing to influx database')
 
-    def writeToPVOutput(inverterData, updateDate):
+    def write_to_pvoutput(inverter_data, update_date):
         # Write to PVOutput
         if pvoutput.lower() == "true":
             logging.info('PvOutput output is enabled, posting results now...')
@@ -230,7 +230,7 @@ def do_work():
             }
 
             # make seconds
-            tuple_time = time.localtime(updateDate / 1000)
+            tuple_time = time.localtime(update_date / 1000)
             # Get hour and date
             date = time.strftime("%Y%m%d", tuple_time)
             hour = time.strftime("%H:%M", tuple_time)
@@ -238,11 +238,11 @@ def do_work():
             pvoutputdata = {
                 "d": date,
                 "t": hour,
-                "v1": inverterData['Daily_Generation'] * 1000,
-                "v2": inverterData['AC_Power'],
-                "v3": inverterData['Daily_Energy_Used'] * 1000,
-                "v4": inverterData['Consumption_Power'],
-                "v6": inverterData['AC_Voltage']
+                "v1": inverter_data['Daily_Generation'] * 1000,
+                "v2": inverter_data['AC_Power'],
+                "v3": inverter_data['Daily_Energy_Used'] * 1000,
+                "v4": inverter_data['Consumption_Power'],
+                "v6": inverter_data['AC_Voltage']
             }
             # Python3 change
             encoded = urllib.parse.urlencode(pvoutputdata)
@@ -256,7 +256,7 @@ def do_work():
             if pvoutput_result.status_code != 200:
                 logging.error('Error posting to PvOutput')
 
-    def writeToMqtt(inverterData, updateDate):
+    def write_to_mqtt(inverter_data, update_date):
         # Push to MQTT
         if mqtt.lower() == "true":
             logging.info('MQTT output is enabled, posting results now...')
@@ -272,8 +272,8 @@ def do_work():
             else:
                 auth_settings = None
 
-            msgs.append((mqtt_topic + "updateDate", int(updateDate), 0, False))
-            for key, value in inverterData.items():
+            msgs.append((mqtt_topic + "updateDate", int(update_date), 0, False))
+            for key, value in inverter_data.items():
                 msgs.append((mqtt_topic + key, value, 0, False))
 
             publish.multiple(msgs, hostname=mqtt_server, auth=auth_settings)
@@ -294,13 +294,13 @@ def do_work():
 
     # output data
     if influx == "true":
-        writeToInfluxDb(inverter_detail, timestamp_current)
+        write_to_influx_db(inverter_detail, timestamp_current)
 
     if pvoutput == "true":
-        writeToPVOutput(inverter_detail, timestamp_current)
+        write_to_pvoutput(inverter_detail, timestamp_current)
 
     if mqtt == "true":
-        writeToMqtt(inverter_detail, timestamp_current)
+        write_to_mqtt(inverter_detail, timestamp_current)
 
 
 def main():
