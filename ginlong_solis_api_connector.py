@@ -55,6 +55,8 @@ COLLECTED_DATA = {
 
 
 def do_work():
+    """worker loop"""
+
     # solis cloud api config
     api_key_id = ""  # os.environ['SOLIS_CLOUD_API_KEY_ID']
     api_key_pw = "".encode("utf-8")  # os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
@@ -304,26 +306,28 @@ def do_work():
 
 
 def main():
+    """the main method"""
+
     global NEXT_RUN_YES
     try:
         do_work()
-    except Exception as e:
-        logging.error('%s : %s' % (type(e).__name__, str(e)))
+    except Exception as exception:
+        logging.error('%s : %s' % (type(exception).__name__, str(exception)))
     NEXT_RUN_YES = 1
 
 
 global NEXT_RUN_YES
 
-get_loglevel = "debug"  # os.environ['LOG_LEVEL']
-loglevel = logging.INFO
-if get_loglevel.lower() == "info":
-    loglevel = logging.INFO
-elif get_loglevel.lower() == "error":
-    loglevel = logging.ERROR
-elif get_loglevel.lower() == "debug":
-    loglevel = logging.DEBUG
+GET_LOGLEVEL = "debug"  # os.environ['LOG_LEVEL']
+LOGLEVEL = logging.INFO
+if GET_LOGLEVEL.lower() == "info":
+    LOGLEVEL = logging.INFO
+elif GET_LOGLEVEL.lower() == "error":
+    LOGLEVEL = logging.ERROR
+elif GET_LOGLEVEL.lower() == "debug":
+    LOGLEVEL = logging.DEBUG
 
-logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(level=LOGLEVEL, format='%(asctime)s %(levelname)s %(message)s')
 logging.info('Started ginlong-solis-api-connector')
 
 schedule.every(1).minutes.at(':00').do(main).run()
