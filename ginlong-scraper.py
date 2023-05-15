@@ -290,7 +290,17 @@ def do_work():
 
     # push to database
     json_formatted_str = json.dumps(inverter_detail, indent=2)
-    print(json_formatted_str)
+    logging.debug(json_formatted_str)
+
+    # output data
+    if influx == "true":
+        writeToInfluxDb(inverter_detail, timestamp_current)
+
+    if pvoutput == "true":
+        writeToPVOutput(inverter_detail, timestamp_current)
+
+    if mqtt == "true":
+        writeToMqtt(inverter_detail, timestamp_current)
 
 
 
