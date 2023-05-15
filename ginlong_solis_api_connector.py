@@ -18,7 +18,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
 import requests
 import schedule
-
+import paho.mqtt.publish as publish
 
 # Not all keys are available depending on your setup
 COLLECTED_DATA = {
@@ -268,7 +268,6 @@ def do_work():
         if mqtt.lower() == "true":
             logging.info('MQTT output is enabled, posting results now...')
 
-            import paho.mqtt.publish as publish
             msgs = []
 
             # Create the topic base using the client_id and serial number
