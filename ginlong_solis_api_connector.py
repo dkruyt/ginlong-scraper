@@ -306,11 +306,10 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     if mqtt == "true":
         write_to_mqtt(inverter_detail, timestamp_current)
 
-
 def main():
     """the main method"""
 
-    global NEXT_RUN_YES
+    global NEXT_RUN_YES  # pylint: disable=global-statement
     try:
         do_work()
     except Exception as exception:  # pylint: disable=broad-exception-caught
@@ -318,7 +317,7 @@ def main():
     NEXT_RUN_YES = 1
 
 
-global NEXT_RUN_YES
+global NEXT_RUN_YES  # pylint: disable=global-at-module-level
 
 GET_LOGLEVEL = "debug"  # os.environ['LOG_LEVEL']
 LOGLEVEL = logging.INFO
