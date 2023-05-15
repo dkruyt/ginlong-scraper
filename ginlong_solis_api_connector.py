@@ -247,8 +247,11 @@ def do_work():
             # Python3 change
             encoded = urllib.parse.urlencode(pvoutputdata)
 
-            pvoutput_result = requests.post("http://pvoutput.org/service/r2/addstatus.jsp", data=encoded,
-                                            headers=headers)
+            pvoutput_result = requests.post(
+                "http://pvoutput.org/service/r2/addstatus.jsp",
+                data=encoded,
+                headers=headers
+            )
             logging.debug('PvOutput response: %s' % pvoutput_result.content)
             if pvoutput_result.status_code != 200:
                 logging.error('Error posting to PvOutput')
@@ -261,7 +264,8 @@ def do_work():
             import paho.mqtt.publish as publish
             msgs = []
 
-            mqtt_topic = ''.join([mqtt_client, "/"])  # Create the topic base using the client_id and serial number
+            # Create the topic base using the client_id and serial number
+            mqtt_topic = ''.join([mqtt_client, "/"])
 
             if (mqtt_username != "" and mqtt_password != ""):
                 auth_settings = {'username': mqtt_username, 'password': mqtt_password}
