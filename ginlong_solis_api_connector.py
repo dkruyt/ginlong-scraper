@@ -15,6 +15,7 @@ import traceback
 
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
 from urllib.request import urlopen, Request
 
 # Not all keys are available depending on your setup
@@ -64,11 +65,11 @@ def do_work():
     device_id = 0  # os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
     # == Constants ===============================================================
-    VERB = "POST"
-    CONTENT_TYPE = "application/json"
-    USER_STATION_LIST = "/v1/api/userStationList"
-    INVERTER_LIST = "/v1/api/inverterList"
-    INVERTER_DETAIL = "/v1/api/inverterDetail"
+    http_function = "POST"
+    mime_content_type = "application/json"
+    endpoint_station_list = "/v1/api/userStationList"
+    endpoint_inverter_list = "/v1/api/inverterList"
+    endpoint_inverter_detail = "/v1/api/inverterDetail"
 
     # == Output ==================================================================
 
@@ -137,7 +138,7 @@ def do_work():
         while True:
             now = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
             encrypt_str = (
-                    VERB + "\n" + md5 + "\n" + CONTENT_TYPE + "\n" + now + "\n" + url_part
+                    http_function + "\n" + md5 + "\n" + mime_content_type + "\n" + now + "\n" + url_part
             )
             hmac_obj = hmac.new(
                 api_key_pw,
@@ -152,7 +153,7 @@ def do_work():
             )
             headers = {
                 "Content-MD5": md5,
-                "Content-Type": CONTENT_TYPE,
+                "Content-Type": mime_content_type,
                 "Date": now,
                 "Authorization": authorization,
             }
@@ -165,12 +166,12 @@ def do_work():
     def get_inverter_list_body() -> str:
         """get inverter list body"""
         body = '{"userid":"' + api_key_id + '"}'
-        content = get_solis_cloud_data(USER_STATION_LIST, body)
+        content = get_solis_cloud_data(endpoint_station_list, body)
         station_info = json.loads(content)["data"]["page"]["records"][0]
         station_id = station_info["id"]
 
         body = '{"stationId":"' + station_id + '"}'
-        content = get_solis_cloud_data(INVERTER_LIST, body)
+        content = get_solis_cloud_data(endpoint_inverter_list, body)
         inverter_info = json.loads(content)["data"]["page"]["records"][
             device_id
         ]
@@ -185,7 +186,7 @@ def do_work():
     def get_inverter_data():
         inverter_detail_body = get_inverter_list_body()
 
-        content = get_solis_cloud_data(INVERTER_DETAIL, inverter_detail_body)
+        content = get_solis_cloud_data(endpoint_inverter_detail, inverter_detail_body)
         inverter_detail = json.loads(content)["data"]
 
         return inverter_detail
@@ -283,7 +284,7 @@ def do_work():
 
     # download data
     inverter_detail_body = get_inverter_list_body()
-    content = get_solis_cloud_data(INVERTER_DETAIL, inverter_detail_body)
+    content = get_solis_cloud_data(endpoint_inverter_detail, inverter_detail_body)
     inverter_detail = json.loads(content)["data"]
     timestamp_current = inverter_detail["dataTimestamp"]
 
