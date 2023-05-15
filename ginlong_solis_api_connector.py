@@ -19,16 +19,16 @@ from urllib.request import urlopen, Request
 
 # Not all keys are available depending on your setup
 COLLECTED_DATA = {
-    'DC_Voltage_PV1': '1a', #
-    'DC_Voltage_PV2': '1b', #
-    'DC_Voltage_PV3': '1c', #
-    'DC_Voltage_PV4': '1d', #
-    'DC_Current1': '1j', #
-    'DC_Current2': '1k', #
-    'DC_Current3': '1l', #
-    'DC_Current4': '1m', #
-    'AC_Voltage': '1ah', #
-    'AC_Current': '1ak', #
+    'DC_Voltage_PV1': '1a',  #
+    'DC_Voltage_PV2': '1b',  #
+    'DC_Voltage_PV3': '1c',  #
+    'DC_Voltage_PV4': '1d',  #
+    'DC_Current1': '1j',  #
+    'DC_Current2': '1k',  #
+    'DC_Current3': '1l',  #
+    'DC_Current4': '1m',  #
+    'AC_Voltage': '1ah',  #
+    'AC_Current': '1ak',  #
     'AC_Power': '1ao',
     'AC_Frequency': '1ar',
     'DC_Power_PV1': '1s',
@@ -41,9 +41,9 @@ COLLECTED_DATA = {
     'Annual_Generation': '1bf',
     'Total_Generation': '1bc',
     'Generation_Last_Month': '1ru',
-    'Power_Grid_Total_Power': '1bq', #
+    'Power_Grid_Total_Power': '1bq',  #
     'Total_On_grid_Generation': '1bu',
-    'Total_Energy_Purchased': '1bv', #
+    'Total_Energy_Purchased': '1bv',  #
     'Consumption_Power': '1cj',
     'Consumption_Energy': '1cn',
     'Daily_Energy_Used': '1co',
@@ -52,15 +52,16 @@ COLLECTED_DATA = {
     'Battery_Charge_Percent': '1cv'
 }
 
+
 def do_work():
     # solis cloud api config
-    api_key_id      = ""#os.environ['SOLIS_CLOUD_API_KEY_ID']
-    api_key_pw      = "".encode("utf-8")#os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
-    domain          = "https://www.soliscloud.com"#os.environ['SOLIS_CLOUD_API_URL']
-    port            = "13333"#os.environ['SOLIS_CLOUD_API_PORT']
-    url             = "{}:{}".format(domain,port)
-    #lan             = os.environ['GINLONG_LANG']
-    device_id       = 0#os.environ['SOLIS_CLOUD_API_INVERTER_ID']
+    api_key_id = ""  # os.environ['SOLIS_CLOUD_API_KEY_ID']
+    api_key_pw = "".encode("utf-8")  # os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
+    domain = "https://www.soliscloud.com"  # os.environ['SOLIS_CLOUD_API_URL']
+    port = "13333"  # os.environ['SOLIS_CLOUD_API_PORT']
+    url = "{}:{}".format(domain, port)
+    # lan = os.environ['GINLONG_LANG']
+    device_id = 0  # os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
     # == Constants ===============================================================
     VERB = "POST"
@@ -69,30 +70,28 @@ def do_work():
     INVERTER_LIST = "/v1/api/inverterList"
     INVERTER_DETAIL = "/v1/api/inverterDetail"
 
-    TODAY = datetime.now().strftime("%Y%m%d")  # format yyyymmdd
-
-    ### Output ###
+    # == Output ==================================================================
 
     # Influx settings
-    influx              = ""#os.environ['USE_INFLUX']
-    influx_database     = ""#os.environ['INFLUX_DATABASE']
-    influx_server       = ""#os.environ['INFLUX_SERVER']
-    influx_port         = ""#os.environ['INFLUX_PORT']
-    influx_user         = ""#os.environ['INFLUX_USER']
-    influx_password     = ""#os.environ['INFLUX_PASSWORD']
-    influx_measurement  = ""#os.environ['INFLUX_MEASUREMENT']
+    influx = ""  # os.environ['USE_INFLUX']
+    influx_database = ""  # os.environ['INFLUX_DATABASE']
+    influx_server = ""  # os.environ['INFLUX_SERVER']
+    influx_port = ""  # os.environ['INFLUX_PORT']
+    influx_user = ""  # os.environ['INFLUX_USER']
+    influx_password = ""  # os.environ['INFLUX_PASSWORD']
+    influx_measurement = ""  # os.environ['INFLUX_MEASUREMENT']
 
     # pvoutput
-    pvoutput            = ""#os.environ['USE_PVOUTPUT']
-    pvoutput_api        = ""#os.environ['PVOUTPUT_API_KEY']
-    pvoutput_system     = ""#os.environ['PVOUTPUT_SYSTEM_ID']
+    pvoutput = ""  # os.environ['USE_PVOUTPUT']
+    pvoutput_api = ""  # os.environ['PVOUTPUT_API_KEY']
+    pvoutput_system = ""  # os.environ['PVOUTPUT_SYSTEM_ID']
 
     # MQTT
-    mqtt                = ""#os.environ['USE_MQTT']
-    mqtt_client         = ""#os.environ['MQTT_CLIENT_ID']
-    mqtt_server         = ""#os.environ['MQTT_SERVER']
-    mqtt_username       = ""#os.environ['MQTT_USERNAME']
-    mqtt_password       = ""#os.environ['MQTT_PASSWORD']
+    mqtt = ""  # os.environ['USE_MQTT']
+    mqtt_client = ""  # os.environ['MQTT_CLIENT_ID']
+    mqtt_server = ""  # os.environ['MQTT_SERVER']
+    mqtt_username = ""  # os.environ['MQTT_USERNAME']
+    mqtt_password = ""  # os.environ['MQTT_PASSWORD']
 
     ###
     # == prettify json output ====================================================
