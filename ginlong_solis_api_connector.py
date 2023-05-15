@@ -1,4 +1,5 @@
 #!/usr/bin/python
+"""Solis cloud API data fetcher."""
 import base64
 import datetime
 import hashlib
@@ -11,6 +12,7 @@ import urllib.parse
 import socket
 import time
 import traceback
+from influxdb import InfluxDBClient
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
@@ -140,7 +142,11 @@ def do_work():
         while True:
             now = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
             encrypt_str = (
-                    http_function + "\n" + md5 + "\n" + mime_content_type + "\n" + now + "\n" + url_part
+                    http_function + "\n"
+                    + md5 + "\n"
+                    + mime_content_type + "\n"
+                    + now + "\n"
+                    + url_part
             )
             hmac_obj = hmac.new(
                 api_key_pw,
@@ -197,7 +203,6 @@ def do_work():
         # Write to Influxdb
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
-            from influxdb import InfluxDBClient
             json_body = [
                 {
                     "measurement": influx_measurement,
