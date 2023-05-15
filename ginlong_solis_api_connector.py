@@ -108,7 +108,7 @@ def do_work():
             request = Request(url, data=post_data, headers=headers)
         else:
             request = Request(url)
-        errorstring = ""
+        error_string = ""
         try:
             with urlopen(request, timeout=30) as response:
                 body = response.read()
@@ -116,18 +116,18 @@ def do_work():
                 logging.debug("Decoded content: " + content)
                 return content
         except HTTPError as error:
-            errorstring = str(error.status) + ": " + error.reason
+            error_string = str(error.status) + ": " + error.reason
         except URLError as error:
-            errorstring = str(error.reason)
+            error_string = str(error.reason)
         except TimeoutError:
-            errorstring = "Request timed out"
+            error_string = "Request timed out"
         except socket.timeout:
-            errorstring = "Socket timed out"
+            error_string = "Socket timed out"
         except Exception as ex:  # pylint: disable=broad-except
-            errorstring = "urlopen exception: " + str(ex)
+            error_string = "urlopen exception: " + str(ex)
             traceback.print_exc()
 
-        logging.error(url + " -> " + errorstring)
+        logging.error(url + " -> " + error_string)
         time.sleep(60)  # retry after 1 minute
         return "ERROR"
 
