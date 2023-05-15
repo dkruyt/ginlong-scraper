@@ -117,7 +117,7 @@ def do_work():
             with urlopen(request, timeout=30) as response:
                 body = response.read()
                 body_content = body.decode("utf-8")
-                logging.debug("Decoded content: " + body_content)
+                logging.debug("Decoded content: %s", body_content)
                 return body_content
         except HTTPError as error:
             error_string = str(error.status) + ": " + error.reason
@@ -259,7 +259,7 @@ def do_work():
                 data=encoded,
                 headers=headers
             )
-            logging.debug('PvOutput response: %s' % pvoutput_result.content)
+            logging.debug('PvOutput response: %s', pvoutput_result.content)
             if pvoutput_result.status_code != 200:
                 logging.error('Error posting to PvOutput')
 
@@ -316,7 +316,7 @@ def main():
     try:
         do_work()
     except Exception as exception:
-        logging.error('%s : %s' % (type(exception).__name__, str(exception)))
+        logging.error('%s : %s', (type(exception).__name__, str(exception)))
     NEXT_RUN_YES = 1
 
 
@@ -339,7 +339,7 @@ schedule.every(1).minutes.at(':00').do(main).run()
 while True:
     if NEXT_RUN_YES == 1:
         next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
-        logging.info('Next run is scheduled at %s' % next_run)
+        logging.info('Next run is scheduled at %s', next_run)
         NEXT_RUN_YES = 0
     schedule.run_pending()
     time.sleep(1)
