@@ -7,6 +7,7 @@ import json
 import logging
 import logging.config
 import urllib
+import urllib.parse
 import socket
 import time
 import traceback
@@ -15,7 +16,6 @@ from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
 import requests
 import schedule
-from urllib.parse import urlencode
 
 
 # Not all keys are available depending on your setup
