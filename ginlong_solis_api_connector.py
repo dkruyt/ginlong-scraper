@@ -12,13 +12,13 @@ import urllib.parse
 import socket
 import time
 import traceback
-from influxdb import InfluxDBClient
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
 import requests
 import schedule
-import paho.mqtt.publish as publish
+from influxdb import InfluxDBClient
+from paho.mqtt import publish
 
 # Not all keys are available depending on your setup
 COLLECTED_DATA = {
