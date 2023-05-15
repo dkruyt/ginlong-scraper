@@ -56,6 +56,6 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ginlong-scraper.py ./
+COPY ginlong-solis-api-connector.py ./
 
-CMD [ "python", "./ginlong-scraper.py" ]
+CMD [ "python", "./ginlong-solis-api-connector.py" ]
