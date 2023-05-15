@@ -53,4 +53,4 @@ this will list the IDs of each inverter.
 
 The grafana-dashboard-example.json file you could import in to Grafana if you use the influx database. Then you can make a dashboard similar to this.
 
-![grafana](https://github.com/Gentleman1983/resources/raw/master/grafana-dashboard-ginlong-small.png)
+![grafana](https://github.com/dkruyt/resources/raw/master/grafana-dashboard-ginlong-small.png)
