@@ -267,7 +267,7 @@ def do_work():
             # Create the topic base using the client_id and serial number
             mqtt_topic = ''.join([mqtt_client, "/"])
 
-            if (mqtt_username != "" and mqtt_password != ""):
+            if mqtt_username != "" and mqtt_password != "":
                 auth_settings = {'username': mqtt_username, 'password': mqtt_password}
             else:
                 auth_settings = None
