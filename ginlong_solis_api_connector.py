@@ -304,15 +304,15 @@ def do_work():
 
 
 def main():
-    global next_run_yes
+    global NEXT_RUN_YES
     try:
         do_work()
     except Exception as e:
         logging.error('%s : %s' % (type(e).__name__, str(e)))
-    next_run_yes = 1
+    NEXT_RUN_YES = 1
 
 
-global next_run_yes
+global NEXT_RUN_YES
 
 get_loglevel = "debug"  # os.environ['LOG_LEVEL']
 loglevel = logging.INFO
@@ -329,9 +329,9 @@ logging.info('Started ginlong-solis-api-connector')
 schedule.every(1).minutes.at(':00').do(main).run()
 # schedule.every(5).minutes.at(':00').do(main).run()
 while True:
-    if next_run_yes == 1:
+    if NEXT_RUN_YES == 1:
         next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
         logging.info('Next run is scheduled at %s' % next_run)
-        next_run_yes = 0
+        NEXT_RUN_YES = 0
     schedule.run_pending()
     time.sleep(1)
