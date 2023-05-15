@@ -9,7 +9,6 @@ import logging
 import logging.config
 import urllib
 import urllib.parse
-import socket
 import time
 import traceback
 from datetime import datetime, timezone
@@ -56,7 +55,7 @@ COLLECTED_DATA = {
 }
 
 
-def do_work():
+def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     """worker loop"""
 
     # solis cloud api config
@@ -255,7 +254,8 @@ def do_work():
             pvoutput_result = requests.post(
                 "http://pvoutput.org/service/r2/addstatus.jsp",
                 data=encoded,
-                headers=headers
+                headers=headers,
+                timeout=120
             )
             logging.debug('PvOutput response: %s', pvoutput_result.content)
             if pvoutput_result.status_code != 200:
