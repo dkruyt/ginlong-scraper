@@ -316,7 +316,7 @@ def main():
     try:
         do_work()
     except Exception as exception:
-        logging.error('%s : %s', (type(exception).__name__, str(exception)))
+        logging.error('%s : %s', type(exception).__name__, str(exception))
     NEXT_RUN_YES = 1
 
 
