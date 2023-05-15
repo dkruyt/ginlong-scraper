@@ -1,23 +1,17 @@
 #!/usr/bin/python
-import requests
-import urllib
-import json
-import datetime
-import time
-import os
-import logging
-import schedule
 import base64
+import datetime
 import hashlib
 import hmac
 import json
-import time
-import sys
-import configparser
-import socket
-import traceback
 import logging
 import logging.config
+import requests
+import urllib
+import schedule
+import socket
+import time
+import traceback
 
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
@@ -35,26 +29,26 @@ COLLECTED_DATA = {
     'DC_Current4': '1m', #
     'AC_Voltage': '1ah', #
     'AC_Current': '1ak', #
-    'AC_Power': '1ao', 
-    'AC_Frequency': '1ar', 
-    'DC_Power_PV1': '1s', 
-    'DC_Power_PV2': '1t', 
-    'DC_Power_PV3': '1u', 
-    'DC_Power_PV4': '1v', 
-    'Inverter_Temperature': '1df', 
-    'Daily_Generation': '1bd', 
-    'Monthly_Generation': '1be', 
-    'Annual_Generation': '1bf', 
-    'Total_Generation': '1bc', 
-    'Generation_Last_Month': '1ru', 
+    'AC_Power': '1ao',
+    'AC_Frequency': '1ar',
+    'DC_Power_PV1': '1s',
+    'DC_Power_PV2': '1t',
+    'DC_Power_PV3': '1u',
+    'DC_Power_PV4': '1v',
+    'Inverter_Temperature': '1df',
+    'Daily_Generation': '1bd',
+    'Monthly_Generation': '1be',
+    'Annual_Generation': '1bf',
+    'Total_Generation': '1bc',
+    'Generation_Last_Month': '1ru',
     'Power_Grid_Total_Power': '1bq', #
-    'Total_On_grid_Generation': '1bu', 
+    'Total_On_grid_Generation': '1bu',
     'Total_Energy_Purchased': '1bv', #
-    'Consumption_Power': '1cj', 
-    'Consumption_Energy': '1cn', 
-    'Daily_Energy_Used': '1co', 
-    'Monthly_Energy_Used': '1cp', 
-    'Annual_Energy_Used': '1cq', 
+    'Consumption_Power': '1cj',
+    'Consumption_Energy': '1cn',
+    'Daily_Energy_Used': '1co',
+    'Monthly_Energy_Used': '1cp',
+    'Annual_Energy_Used': '1cq',
     'Battery_Charge_Percent': '1cv'
 }
 
@@ -101,6 +95,10 @@ def do_work():
     mqtt_password       = ""#os.environ['MQTT_PASSWORD']
 
     ###
+    # == prettify json output ====================================================
+    def prettify_json(input_json) -> str:
+        """prettifies json for better output readability"""
+        return json.dumps(json.loads(input_json), indent=2)
 
     # == post ====================================================================
     def execute_request(url, data, headers) -> str:
@@ -115,7 +113,7 @@ def do_work():
             with urlopen(request, timeout=30) as response:
                 body = response.read()
                 content = body.decode("utf-8")
-                logging.debug(content)
+                logging.debug("Decoded content: " + content)
                 return content
         except HTTPError as error:
             errorstring = str(error.status) + ": " + error.reason
@@ -160,7 +158,7 @@ def do_work():
                 "Authorization": authorization,
             }
             content = execute_request(url + url_part, data, headers)
-            logging.debug(url+url_part + "->" + content)
+            logging.debug(url + url_part + "->" + prettify_json(content))
             if content != "ERROR":
                 return content
 
@@ -181,7 +179,7 @@ def do_work():
         inverter_sn = inverter_info["sn"]
 
         body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
-        logging.info("body: %s", body)
+        logging.debug("body: %s", body)
         return body
 
     # == MAIN ====================================================================
@@ -190,8 +188,6 @@ def do_work():
 
         content = get_solis_cloud_data(INVERTER_DETAIL, inverter_detail_body)
         inverter_detail = json.loads(content)["data"]
-        json_formatted_str = json.dumps(inverter_detail, indent=2)
-        print(json_formatted_str)
 
         return inverter_detail
 
@@ -303,7 +299,6 @@ def do_work():
         writeToMqtt(inverter_detail, timestamp_current)
 
 
-
 def main():
     global next_run_yes
     try:
@@ -315,7 +310,7 @@ def main():
 
 global next_run_yes
 
-get_loglevel = "debug"#os.environ['LOG_LEVEL']
+get_loglevel = "debug"  # os.environ['LOG_LEVEL']
 loglevel = logging.INFO
 if get_loglevel.lower() == "info":
     loglevel = logging.INFO
@@ -325,10 +320,10 @@ elif get_loglevel.lower() == "debug":
     loglevel = logging.DEBUG
 
 logging.basicConfig(level=loglevel, format='%(asctime)s %(levelname)s %(message)s')
-logging.info('Started ginlong-solis-scraper')
+logging.info('Started ginlong-solis-api-connector')
 
 schedule.every(1).minutes.at(':00').do(main).run()
-#schedule.every(5).minutes.at(':00').do(main).run()
+# schedule.every(5).minutes.at(':00').do(main).run()
 while True:
     if next_run_yes == 1:
         next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
