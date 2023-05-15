@@ -124,9 +124,7 @@ def do_work():
         except URLError as error:
             error_string = str(error.reason)
         except TimeoutError:
-            error_string = "Request timed out"
-        except socket.timeout:
-            error_string = "Socket timed out"
+            error_string = "Request or socket timed out"
         except Exception as ex:  # pylint: disable=broad-except
             error_string = "urlopen exception: " + str(ex)
             traceback.print_exc()
@@ -315,7 +313,7 @@ def main():
     global NEXT_RUN_YES
     try:
         do_work()
-    except Exception as exception:
+    except Exception as exception:  # pylint: disable=broad-exception-caught
         logging.error('%s : %s', type(exception).__name__, str(exception))
     NEXT_RUN_YES = 1
 
