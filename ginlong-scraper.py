@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
 
-# Not all keys are avilable depending on your setup
+# Not all keys are available depending on your setup
 COLLECTED_DATA = {
     'DC_Voltage_PV1': '1a', #
     'DC_Voltage_PV2': '1b', #
