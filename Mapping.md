@@ -7,8 +7,8 @@ This table helps to define which Solis REST API endpoints provide which informat
 | AC_Frequency             | float     | inverterDetail | fac                      |
 | AC_Power                 | float     | inverterDetail | pac                      |
 | AC_Voltage               | float     |                |                          |                         
-| Annual_Energy_Used       | float     |                |                          |                         
-| Annual_Generation        | float     | inverterDetail | eYear                    |
+| Annual_Energy_Used       | float     | inverterYear   | energy - gridSellEnergy  |                         
+| Annual_Generation        | float     | inverterYear   | energy                   |
 | Battery_Charge_Percent   | float     |                |                          |                         
 | Consumption_Energy       | float     | inverterDetail | homeLoadTotalEnergy      |                         
 | Consumption_Power        | float     | inverterDetail | familyLoadPower          |                         
@@ -24,11 +24,11 @@ This table helps to define which Solis REST API endpoints provide which informat
 | DC_Voltage_PV2           | float     | inverterDetail | uPv2                     |
 | DC_Voltage_PV3           | float     | inverterDetail | uPv3                     |
 | DC_Voltage_PV4           | float     | inverterDetail | uPv4                     |
-| Daily_Energy_Used        | float     |                |                          |                         
+| Daily_Energy_Used        | float     | inverterDetail | eToday - gridSellTodayEnergy                         |                         
 | Daily_Generation         | float     | inverterDetail | eToday                   |
-| Generation_Last_Month    | float     |                |                          |                         
+| Generation_Last_Month    | float     | inverterMonth  | energy                   |                         
 | Inverter_Temperature     | float     | inverterDetail | inverterTemperature      |
-| Monthly_Energy_Used      | float     |                |                          |                         
+| Monthly_Energy_Used      | float     | inverterMonth  | energy - gridSellEnergy  |                         
 | Monthly_Generation       | float     | inverterDetail | eMonth                   |
 | Power_Grid_Total_Power   | float     |                |                          |                         
 | Total_Energy_Purchased   | float     | inverterDetail | gridPurchasedTotalEnergy | 
