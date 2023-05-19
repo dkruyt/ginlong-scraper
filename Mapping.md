@@ -3,10 +3,10 @@ This table helps to define which Solis REST API endpoints provide which informat
 
 | fieldKey                 | fieldType | REST endpoint  | API                      |
 |--------------------------|-----------|----------------|--------------------------|
-| AC_Current               | float     | inverterDetail |                          |                         
+| AC_Current               | float     | inverterDetail | (iAc1+iAc2+iAc3)/3       |                         
 | AC_Frequency             | float     | inverterDetail | fac                      |
 | AC_Power                 | float     | inverterDetail | pac                      |
-| AC_Voltage               | float     |                |                          |                         
+| AC_Voltage               | float     | inverterDetail | (uAc1+uAc2+uAc3)/3       |                         
 | Annual_Energy_Used       | float     | inverterYear   | energy - gridSellEnergy  |                         
 | Annual_Generation        | float     | inverterYear   | energy                   |
 | Battery_Charge_Percent   | float     |                |                          |                         
@@ -30,7 +30,7 @@ This table helps to define which Solis REST API endpoints provide which informat
 | Inverter_Temperature     | float     | inverterDetail | inverterTemperature      |
 | Monthly_Energy_Used      | float     | inverterMonth  | energy - gridSellEnergy  |                         
 | Monthly_Generation       | float     | inverterDetail | eMonth                   |
-| Power_Grid_Total_Power   | float     |                |                          |                         
+| Power_Grid_Total_Power   | float     | inverterDetail | pSum                     |                         
 | Total_Energy_Purchased   | float     | inverterDetail | gridPurchasedTotalEnergy | 
 | Total_Generation         | float     | inverterDetail | eTotal                   |     
 | Total_On_grid_Generation | float     | inverterDetail | gridSellTotalEnergy      |      
