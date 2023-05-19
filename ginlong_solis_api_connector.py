@@ -239,17 +239,17 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             date = time.strftime("%Y%m%d", tuple_time)
             hour = time.strftime("%H:%M", tuple_time)
 
-            pvoutputdata = {
+            pvoutput_data = {
                 "d": date,
                 "t": hour,
-                "v1": inverter_data['Daily_Generation'] * 1000,
-                "v2": inverter_data['AC_Power'],
-                "v3": inverter_data['Daily_Energy_Used'] * 1000,
-                "v4": inverter_data['Consumption_Power'],
-                "v6": inverter_data['AC_Voltage']
+                "v1": inverter_data['eToday'] * 1000,
+                "v2": inverter_data['pac'],
+                "v3": (inverter_data['eToday'] - inverter_data['gridSellTodayEnergy']) * 1000,
+                "v4": inverter_data['familyLoadPower'],
+                "v6": (inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3
             }
             # Python3 change
-            encoded = urllib.parse.urlencode(pvoutputdata)
+            encoded = urllib.parse.urlencode(pvoutput_data)
 
             pvoutput_result = requests.post(
                 "http://pvoutput.org/service/r2/addstatus.jsp",
