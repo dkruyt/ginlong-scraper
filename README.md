@@ -23,11 +23,11 @@ and just vary the deviceId in the environment variables.
 | Environment variable      | Required | Description                                                                                          | Default value   |
 |---------------------------|----------|------------------------------------------------------------------------------------------------------|-----------------|
 | LOG_LEVEL                 | No       | Logging level (ERROR, INFO, DEBUG)                                                                   | `INFO`          |
-| GINLONG_USERNAME          | Yes      | Ginlong Solis username                                                                               | *empty*         |
-| GINLONG_PASSWORD          | Yes      | Ginlong Solis password                                                                               | *empty*         |
-| GINLONG_DOMAIN            | No       | Ginlong Solis domain                                                                                 | `m.ginlong.com` |
-| GINLONG_LANG              | No       | Ginlong Solis language                                                                               | `2` *(English)* |
-| GINLONG_DEVICE_ID         | No       | Ginlong Solis device ID<br/>(only required if auto-detect fails or if you have more than one device) | *empty*         |
+| SOLIS_CLOUD_API_KEY_ID    | Yes      | API Key ID                                                                                           | *empty*         |
+| SOLIS_CLOUD_API_KEY_SECRET| Yes      | API Key Secret                                                                                       | *empty*         |
+| SOLIS_CLOUD_API_URL       | No       | API URL                                                                                              | `https://www.soliscloud.com` |
+| SOLIS_CLOUD_API_PORT      | No       | API Port                                                                                             | `13333`         |
+| SOLIS_CLOUD_API_INVERTER_ID| No      | Ginlong Solis device ID<br/>(only required if auto-detect fails or if you have more than one device) | *empty*         |
 | USE_INFLUX                | No       | Set to true if you want to use InfluxDB as output                                                    | `false`         |
 | INFLUX_DATABASE           | No       | InfluxDB DB name                                                                                     | `influxdb`      |
 | INFLUX_SERVER             | No       | InfluxDB server                                                                                      | `localhost`     |
