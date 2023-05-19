@@ -20,30 +20,30 @@ and just vary the deviceId in the environment variables.
 
 ### Environment variables
 
-| Environment variable      | Required | Description                                                                                          | Default value   |
-|---------------------------|----------|------------------------------------------------------------------------------------------------------|-----------------|
-| LOG_LEVEL                 | No       | Logging level (ERROR, INFO, DEBUG)                                                                   | `INFO`          |
-| SOLIS_CLOUD_API_KEY_ID    | Yes      | API Key ID                                                                                           | *empty*         |
-| SOLIS_CLOUD_API_KEY_SECRET| Yes      | API Key Secret                                                                                       | *empty*         |
-| SOLIS_CLOUD_API_URL       | No       | API URL                                                                                              | `https://www.soliscloud.com` |
-| SOLIS_CLOUD_API_PORT      | No       | API Port                                                                                             | `13333`         |
-| SOLIS_CLOUD_API_INVERTER_ID| No      | Ginlong Solis device ID<br/>(only required if auto-detect fails or if you have more than one device) | *empty*         |
-| USE_INFLUX                | No       | Set to true if you want to use InfluxDB as output                                                    | `false`         |
-| INFLUX_DATABASE           | No       | InfluxDB DB name                                                                                     | `influxdb`      |
-| INFLUX_SERVER             | No       | InfluxDB server                                                                                      | `localhost`     |
-| INFLUX_PORT               | No       | InfluxDB server port                                                                                 | `8086`          |
-| INFLUX_USER               | No       | InfluxDB User                                                                                        | *empty*         |
-| INFLUX_PASSWORD           | No       | InfluxDB Password                                                                                    | *empty*         |
-| INFLUX_MEASUREMENT        | No       | InfluxDB measurement type                                                                            | `PV`            |
-| USE_PVOUTPUT              | No       | Set to true if you want to use PvOutput as output                                                    | `false`         |
-| PVOUTPUT_API_KEY          | No       | PvOutput API key                                                                                     | *empty*         |
-| PVOUTPUT_SYSTEM_ID        | No       | PvOutput system ID                                                                                   | *empty*         |
-| USE_MQTT                  | No       | Set to true if you want to use MQTT as output                                                        | `false`         |
-| MQTT_CLIENT_ID            | No       | MQTT client ID                                                                                       | `pv`            |
-| MQTT_SERVER               | No       | MQTT server                                                                                          | `localhost`     |
-| MQTT_USERNAME             | No       | MQTT username                                                                                        | *empty*         |
-| MQTT_PASSWORD             | No       | MQTT password                                                                                        | *empty*         |
-| TZ                        | No       | TimeZone e.g Australia/Sydney                                                                        | *empty*         |
+| Environment variable        | Required  | Description                                                                                          | Default value                |
+|-----------------------------|-----------|------------------------------------------------------------------------------------------------------|------------------------------|
+| LOG_LEVEL                   | No        | Logging level (ERROR, INFO, DEBUG)                                                                   | `INFO`                       |
+| SOLIS_CLOUD_API_KEY_ID      | Yes       | API Key ID                                                                                           | *empty*                      |
+| SOLIS_CLOUD_API_KEY_SECRET  | Yes       | API Key Secret                                                                                       | *empty*                      |
+| SOLIS_CLOUD_API_URL         | No        | API URL                                                                                              | `https://www.soliscloud.com` |
+| SOLIS_CLOUD_API_PORT        | No        | API Port                                                                                             | `13333`                      |
+| SOLIS_CLOUD_API_INVERTER_ID | No        | Ginlong Solis device ID<br/>(only required if auto-detect fails or if you have more than one device) | *empty*                      |
+| USE_INFLUX                  | No        | Set to true if you want to use InfluxDB as output                                                    | `false`                      |
+| INFLUX_DATABASE             | No        | InfluxDB DB name                                                                                     | `influxdb`                   |
+| INFLUX_SERVER               | No        | InfluxDB server                                                                                      | `localhost`                  |
+| INFLUX_PORT                 | No        | InfluxDB server port                                                                                 | `8086`                       |
+| INFLUX_USER                 | No        | InfluxDB User                                                                                        | *empty*                      |
+| INFLUX_PASSWORD             | No        | InfluxDB Password                                                                                    | *empty*                      |
+| INFLUX_MEASUREMENT          | No        | InfluxDB measurement type                                                                            | `PV`                         |
+| USE_PVOUTPUT                | No        | Set to true if you want to use PvOutput as output                                                    | `false`                      |
+| PVOUTPUT_API_KEY            | No        | PvOutput API key                                                                                     | *empty*                      |
+| PVOUTPUT_SYSTEM_ID          | No        | PvOutput system ID                                                                                   | *empty*                      |
+| USE_MQTT                    | No        | Set to true if you want to use MQTT as output                                                        | `false`                      |
+| MQTT_CLIENT_ID              | No        | MQTT client ID                                                                                       | `pv`                         |
+| MQTT_SERVER                 | No        | MQTT server                                                                                          | `localhost`                  |
+| MQTT_USERNAME               | No        | MQTT username                                                                                        | *empty*                      |
+| MQTT_PASSWORD               | No        | MQTT password                                                                                        | *empty*                      |
+| TZ                          | No        | TimeZone e.g Australia/Sydney                                                                        | *empty*                      |
 
 Note that if you have more than 1 device - then it is not readily apparent where to get the Device ID
 In that case - setup the script, and set `LOG_LEVEL` to `DEBUG`, then view the logs and search for deviceId - 
