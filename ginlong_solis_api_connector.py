@@ -73,6 +73,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     endpoint_station_list = "/v1/api/userStationList"
     endpoint_inverter_list = "/v1/api/inverterList"
     endpoint_inverter_detail = "/v1/api/inverterDetail"
+    endpoint_inverter_dayly = "/v1/api/inverterDay"
+    endpoint_inverter_monthly = "/v1/api/inverterMonth"
+    endpoint_inverter_yearly = "/v1/api/inverterYear"
 
     # == Output ==================================================================
 
@@ -187,6 +190,20 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         logging.debug("body: %s", body)
         return body
 
+    def get_inverter_details():
+        inverter_detail_body = get_inverter_list_body()
+        content = get_solis_cloud_data(endpoint_inverter_detail, inverter_detail_body)
+        return json.loads(content)["data"]
+
+    def get_inverter_day_data():
+        return
+
+    def get_inverter_month_data():
+        return
+
+    def get_inverter_year_data():
+        return
+
     # == MAIN ====================================================================
     def get_inverter_data():
         inverter_list_body = get_inverter_list_body()
@@ -196,7 +213,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
         return inverter_detail_data
 
-    def write_to_influx_db(inverter_data, update_date):
+    def write_to_influx_db(inverter_data, inverter_last_day, inverter_month, inverter_last_month, inverter_year, update_date):
         # Write to Influxdb
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
@@ -287,9 +304,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return
 
     # download data
-    inverter_detail_body = get_inverter_list_body()
-    content = get_solis_cloud_data(endpoint_inverter_detail, inverter_detail_body)
-    inverter_detail = json.loads(content)["data"]
+    inverter_detail = get_inverter_details()
     timestamp_current = inverter_detail["dataTimestamp"]
 
     # push to database
@@ -298,13 +313,21 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
     # output data
     if influx == "true":
-        write_to_influx_db(inverter_detail, timestamp_current)
+        write_to_influx_db(
+            inverter_detail,
+            inverter_detail,
+            inverter_detail,
+            inverter_detail,
+            inverter_detail,
+            timestamp_current
+        )
 
     if pvoutput == "true":
         write_to_pvoutput(inverter_detail, timestamp_current)
 
     if mqtt == "true":
         write_to_mqtt(inverter_detail, timestamp_current)
+
 
 def main():
     """the main method"""
