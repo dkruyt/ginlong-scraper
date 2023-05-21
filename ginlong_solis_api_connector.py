@@ -19,41 +19,6 @@ import schedule
 from influxdb import InfluxDBClient
 from paho.mqtt import publish
 
-# Not all keys are available depending on your setup
-COLLECTED_DATA = {
-    'DC_Voltage_PV1': '1a',  #
-    'DC_Voltage_PV2': '1b',  #
-    'DC_Voltage_PV3': '1c',  #
-    'DC_Voltage_PV4': '1d',  #
-    'DC_Current1': '1j',  #
-    'DC_Current2': '1k',  #
-    'DC_Current3': '1l',  #
-    'DC_Current4': '1m',  #
-    'AC_Voltage': '1ah',  #
-    'AC_Current': '1ak',  #
-    'AC_Power': '1ao',
-    'AC_Frequency': '1ar',
-    'DC_Power_PV1': '1s',
-    'DC_Power_PV2': '1t',
-    'DC_Power_PV3': '1u',
-    'DC_Power_PV4': '1v',
-    'Inverter_Temperature': '1df',
-    'Daily_Generation': '1bd',
-    'Monthly_Generation': '1be',
-    'Annual_Generation': '1bf',
-    'Total_Generation': '1bc',
-    'Generation_Last_Month': '1ru',
-    'Power_Grid_Total_Power': '1bq',  #
-    'Total_On_grid_Generation': '1bu',
-    'Total_Energy_Purchased': '1bv',  #
-    'Consumption_Power': '1cj',
-    'Consumption_Energy': '1cn',
-    'Daily_Energy_Used': '1co',
-    'Monthly_Energy_Used': '1cp',
-    'Annual_Energy_Used': '1cq',
-    'Battery_Charge_Percent': '1cv'
-}
-
 
 def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     """worker loop"""
@@ -254,6 +219,53 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         # Write to Influxdb
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
+
+            #Building fields to export
+            dict_detail=json.loads(inverter_data)
+            dict_lastday=json.loads(inverter_data_last_day)
+            dict_month=json.loads(inverter_month)
+            dict_lastmonth=json.loads(inverter_data_lastmonth)
+            dict_year=json.loads(inverter_year)
+            dict_lastyear=json.loads(inverter_last_year)
+
+            dict_fields={}
+            dict_fields['DC_Voltage_PV1']=
+            dict_fields['DC_Voltage_PV2']=
+            dict_fields['DC_Voltage_PV3'] =
+            dict_fields['DC_Voltage_PV4'] =
+            dict_fields['DC_Current1'] =
+            dict_fields['DC_Current2'] =
+            dict_fields['DC_Current3'] =
+            dict_fields['DC_Current4'] =
+            dict_fields['AC_Voltage'] =
+            dict_fields['AC_Current'] =
+            dict_fields['AC_Power'] =
+            dict_fields['AC_Frequency'] =
+            dict_fields['DC_Power_PV1'] =
+            dict_fields['DC_Power_PV2'] =
+            dict_fields['DC_Power_PV3'] =
+            dict_fields['DC_Power_PV4'] =
+            dict_fields['Inverter_Temperature'] =
+            dict_fields['Daily_Generation'] =
+            dict_fields['Monthly_Generation'] =
+            dict_fields['Annual_Generation'] =
+            dict_fields['Total_Generation'] =
+            dict_fields['Generation_Last_Month'] =
+            dict_fields['Power_Grid_Total_Power'] =
+            dict_fields['Total_On_grid_Generation'] =
+            dict_fields['Total_Energy_Purchased'] =
+            dict_fields['Consumption_Power'] =
+            dict_fields['Consumption_Energy'] =
+            dict_fields['Daily_Energy_Used'] =
+            dict_fields['Monthly_Energy_Used'] =
+            dict_fields['Annual_Energy_Used'] =
+            dict_fields['Battery_Charge_Percent'] =
+
+            #Read inverter_detail into dict
+            dict_fields.update(dict_detail)
+
+            inverter_json=json.dumps(dict_fields)
+
             json_body = [
                 {
                     "measurement": influx_measurement,
@@ -261,7 +273,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                         "deviceId": device_id
                     },
                     "time": int(update_date),
-                    "fields": inverter_data
+                    "fields": inverter_json
                 }
             ]
             if influx_user != "" and influx_password != "":
