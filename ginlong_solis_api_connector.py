@@ -171,7 +171,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return data_content
 
     # == get_inverter_list_body ==================================================
-    def get_inverter_list_body() -> str:
+    def get_inverter_list_body(time_kat='',time_string='') -> str:
         """get inverter list body"""
         body = '{"userid":"' + api_key_id + '"}'
         data_content = get_solis_cloud_data(endpoint_station_list, body)
@@ -186,7 +186,10 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         inverter_id = inverter_info["id"]
         inverter_sn = inverter_info["sn"]
 
-        body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
+        if time_kat=="":
+            body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
+        else:
+            body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '","' + time_kat + '":"' + time_string + '"}'
         logging.debug("body: %s", body)
         return body
 
@@ -196,13 +199,47 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.loads(content)["data"]
 
     def get_inverter_day_data():
-        return
+        inverter_detail_body = get_inverter_list_body()
+        content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
+        return json.loads(content)["data"]
+
 
     def get_inverter_month_data():
-        return
+        inverter_detail_body = get_inverter_list_body()
+        content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
+        return json.loads(content)["data"]
+
 
     def get_inverter_year_data():
-        return
+        inverter_detail_body = get_inverter_list_body()
+        content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
+        return json.loads(content)["data"]
+
+    def get_inverter_lastday_data():
+        today = datetime.date.today()
+        last_day = today - datetime.timedelta(days=1)
+        str_last_day = last_day.strftime("%Y-%m-%d")
+        inverter_detail_body = get_inverter_list_body('time',str_last_day)
+        content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
+        return json.loads(content)["data"]
+    def get_inverter_lastmonth_data():
+        today = datetime.date.today()
+        first = today.replace(day=1)
+        lastMonth = first - datetime.timedelta(days=1)
+        str_last_month = lastMonth.strftime("%Y-%m")
+        inverter_detail_body = get_inverter_list_body('month',str_last_month)
+        content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
+        return json.loads(content)["data"]
+
+    def get_inverter_lastyear_data():
+        today = datetime.date.today()
+        first = today.replace(day=1,month=1)
+        last_year = first - datetime.timedelta(days=1)
+        str_last_year = last_year.strftime("%Y")
+        inverter_detail_body = get_inverter_list_body('year',str_last_year)
+        content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
+        return json.loads(content)["data"]
+
 
     # == MAIN ====================================================================
     def get_inverter_data():
@@ -213,7 +250,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
         return inverter_detail_data
 
-    def write_to_influx_db(inverter_data, inverter_last_day, inverter_month, inverter_last_month, inverter_year, update_date):
+    def write_to_influx_db(inverter_data, inverter_last_day, inverter_month, inverter_last_month, inverter_year, inverter_last_year, update_date):
         # Write to Influxdb
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
@@ -306,6 +343,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     # download data
     inverter_detail = get_inverter_details()
     timestamp_current = inverter_detail["dataTimestamp"]
+    inverter_data_last_day=get_inverter_lastday_data()
+    inverter_data_month=get_inverter_month_data()
+    inverter_data_lastmonth=get_inverter_lastmonth_data()
+    inverter_data_year=get_inverter_year_data()
+    inverter_data_lastyear=get_inverter_lastyear_data()
 
     # push to database
     json_formatted_str = json.dumps(inverter_detail, indent=2)
@@ -315,10 +357,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     if influx == "true":
         write_to_influx_db(
             inverter_detail,
-            inverter_detail,
-            inverter_detail,
-            inverter_detail,
-            inverter_detail,
+            inverter_data_last_day,
+            inverter_data_month,
+            inverter_data_lastmonth,
+            inverter_data_year,
+            inverter_data_lastyear,
             timestamp_current
         )
 
