@@ -136,7 +136,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return data_content
 
     # == get_inverter_list_body ==================================================
-    def get_inverter_ids() -> str:
+    def get_inverter_ids():
         body = '{"userid":"' + api_key_id + '"}'
         data_content = get_solis_cloud_data(endpoint_station_list, body)
         station_info = json.loads(data_content)["data"]["page"]["records"][0]
@@ -165,17 +165,23 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.loads(content)["data"]
 
     def get_inverter_day_data(inverter_id, inverter_sn):
-        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
+        today = date.today()
+        str_day = today.strftime("%Y-%m-%d")
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn, 'time', str_day)
         content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
         return json.loads(content)["data"]
 
     def get_inverter_month_data(inverter_id, inverter_sn):
-        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
+        today = date.today()
+        str_month = today.strftime("%Y-%m")
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn, 'month', str_month)
         content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
         return json.loads(content)["data"]
 
     def get_inverter_year_data(inverter_id, inverter_sn):
-        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
+        today = date.today()
+        str_year = today.strftime("%Y")
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn, 'year', str_year)
         content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
         return json.loads(content)["data"]
 
@@ -212,12 +218,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
             # Building fields to export
-            dict_detail = json.loads(inverter_data)
-            dict_lastday = json.loads(inverter_data_last_day)
-            dict_month = json.loads(inverter_month)
-            dict_lastmonth = json.loads(inverter_data_lastmonth)
-            dict_year = json.loads(inverter_year)
-            dict_lastyear = json.loads(inverter_last_year)
+            dict_detail = inverter_data
+            dict_lastday = inverter_data_last_day
+            dict_month = inverter_month
+            dict_lastmonth = inverter_data_lastmonth
+            dict_year = inverter_year
+            dict_lastyear = inverter_last_year
 
             dict_fields = {'DC_Voltage_PV1': dict_detail['uPv1'], 'DC_Voltage_PV2': dict_detail['uPv2'],
                           'DC_Voltage_PV3': dict_detail['uPv3'], 'DC_Voltage_PV4': dict_detail['uPv4'],
@@ -343,11 +349,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     inverter_sn = inverter_result[1]
     inverter_detail = get_inverter_details(inverter_id, inverter_sn)
     timestamp_current = inverter_detail["dataTimestamp"]
-    inverter_data_last_day=get_inverter_lastday_data(inverter_id, inverter_sn)
-    inverter_data_month=get_inverter_month_data(inverter_id, inverter_sn)
-    inverter_data_lastmonth=get_inverter_lastmonth_data(inverter_id, inverter_sn)
-    inverter_data_year=get_inverter_year_data(inverter_id, inverter_sn)
-    inverter_data_lastyear=get_inverter_lastyear_data(inverter_id, inverter_sn)
+    inverter_data_last_day = get_inverter_lastday_data(inverter_id, inverter_sn)
+    inverter_data_month = get_inverter_month_data(inverter_id, inverter_sn)
+    inverter_data_lastmonth = get_inverter_lastmonth_data(inverter_id, inverter_sn)
+    inverter_data_year = get_inverter_year_data(inverter_id, inverter_sn)
+    inverter_data_lastyear = get_inverter_lastyear_data(inverter_id, inverter_sn)
 
     # push to database
     json_formatted_str = json.dumps(inverter_detail, indent=2)
