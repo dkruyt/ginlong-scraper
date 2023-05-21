@@ -136,7 +136,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return data_content
 
     # == get_inverter_list_body ==================================================
-    def get_inverter_list_body(time_kat='',time_string='') -> str:
+    def get_inverter_list_body(time_category='', time_string='') -> str:
         """get inverter list body"""
         body = '{"userid":"' + api_key_id + '"}'
         data_content = get_solis_cloud_data(endpoint_station_list, body)
@@ -151,10 +151,10 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         inverter_id = inverter_info["id"]
         inverter_sn = inverter_info["sn"]
 
-        if time_kat=="":
+        if time_category== "":
             body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
         else:
-            body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '","' + time_kat + '":"' + time_string + '"}'
+            body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '","' + time_category + '":"' + time_string + '"}'
         logging.debug("body: %s", body)
         return body
 
@@ -276,6 +276,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                     "fields": inverter_json
                 }
             ]
+
+            logging.debug("sent to influxDb -> %s", prettify_json(json_body))
+
             if influx_user != "" and influx_password != "":
                 client = InfluxDBClient(host=influx_server, port=influx_port, username=influx_user,
                                         password=influx_password)
@@ -346,6 +349,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             for key, value in inverter_data.items():
                 msgs.append((mqtt_topic + key, value, 0, False))
 
+            logging.debug("writing to MQTT -> %s", msgs)
             publish.multiple(msgs, hostname=mqtt_server, auth=auth_settings)
 
     if api_key_id == "" or api_key_pw == "":
