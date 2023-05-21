@@ -136,8 +136,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return data_content
 
     # == get_inverter_list_body ==================================================
-    def get_inverter_list_body(time_category='', time_string='') -> str:
-        """get inverter list body"""
+    def get_inverter_ids() -> str:
         body = '{"userid":"' + api_key_id + '"}'
         data_content = get_solis_cloud_data(endpoint_station_list, body)
         station_info = json.loads(data_content)["data"]["page"]["records"][0]
@@ -150,7 +149,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         ]
         inverter_id = inverter_info["id"]
         inverter_sn = inverter_info["sn"]
+        return inverter_id, inverter_sn
 
+    def get_inverter_list_body(inverter_id, inverter_sn, time_category='', time_string='') -> str:
         if time_category == "":
             body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
         else:
@@ -158,63 +159,55 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         logging.debug("body: %s", body)
         return body
 
-    def get_inverter_details():
-        inverter_detail_body = get_inverter_list_body()
+    def get_inverter_details(inverter_id, inverter_sn):
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
         content = get_solis_cloud_data(endpoint_inverter_detail, inverter_detail_body)
         return json.loads(content)["data"]
 
-    def get_inverter_day_data():
-        inverter_detail_body = get_inverter_list_body()
+    def get_inverter_day_data(inverter_id, inverter_sn):
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
         content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
         return json.loads(content)["data"]
 
-    def get_inverter_month_data():
-        inverter_detail_body = get_inverter_list_body()
+    def get_inverter_month_data(inverter_id, inverter_sn):
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
         content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
         return json.loads(content)["data"]
 
-    def get_inverter_year_data():
-        inverter_detail_body = get_inverter_list_body()
+    def get_inverter_year_data(inverter_id, inverter_sn):
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
         content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
         return json.loads(content)["data"]
 
-    def get_inverter_lastday_data():
+    def get_inverter_lastday_data(inverter_id, inverter_sn):
         today = date.today()
         last_day = today - timedelta(days=1)
         str_last_day = last_day.strftime("%Y-%m-%d")
-        inverter_detail_body = get_inverter_list_body('time', str_last_day)
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn, 'time', str_last_day)
         content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
         return json.loads(content)["data"]
 
-    def get_inverter_lastmonth_data():
+    def get_inverter_lastmonth_data(inverter_id, inverter_sn):
         today = date.today()
         first = today.replace(day=1)
         lastmonth = first - timedelta(days=1)
         str_last_month = lastmonth.strftime("%Y-%m")
-        inverter_detail_body = get_inverter_list_body('month', str_last_month)
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn, 'month', str_last_month)
         content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
         return json.loads(content)["data"]
 
-    def get_inverter_lastyear_data():
+    def get_inverter_lastyear_data(inverter_id, inverter_sn):
         today = date.today()
         first = today.replace(day=1, month=1)
         last_year = first - timedelta(days=1)
         str_last_year = last_year.strftime("%Y")
-        inverter_detail_body = get_inverter_list_body('year', str_last_year)
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn, 'year', str_last_year)
         content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
         return json.loads(content)["data"]
 
     # == MAIN ====================================================================
-    def get_inverter_data():
-        inverter_list_body = get_inverter_list_body()
-
-        data_content = get_solis_cloud_data(endpoint_inverter_detail, inverter_list_body)
-        inverter_detail_data = json.loads(data_content)["data"]
-
-        return inverter_detail_data
-
-    def write_to_influx_db(inverter_data, inverter_last_day, inverter_month, inverter_last_month, inverter_year, inverter_last_year, update_date):
         # Write to Influxdb
+    def write_to_influx_db(inverter_data, inverter_last_day, inverter_month, inverter_last_month, inverter_year, inverter_last_year, update_date):
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
@@ -345,13 +338,16 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return
 
     # download data
-    inverter_detail = get_inverter_details()
+    inverter_result = get_inverter_ids()
+    inverter_id = inverter_result[0]
+    inverter_sn = inverter_result[1]
+    inverter_detail = get_inverter_details(inverter_id, inverter_sn)
     timestamp_current = inverter_detail["dataTimestamp"]
-    inverter_data_last_day=get_inverter_lastday_data()
-    inverter_data_month=get_inverter_month_data()
-    inverter_data_lastmonth=get_inverter_lastmonth_data()
-    inverter_data_year=get_inverter_year_data()
-    inverter_data_lastyear=get_inverter_lastyear_data()
+    inverter_data_last_day=get_inverter_lastday_data(inverter_id, inverter_sn)
+    inverter_data_month=get_inverter_month_data(inverter_id, inverter_sn)
+    inverter_data_lastmonth=get_inverter_lastmonth_data(inverter_id, inverter_sn)
+    inverter_data_year=get_inverter_year_data(inverter_id, inverter_sn)
+    inverter_data_lastyear=get_inverter_lastyear_data(inverter_id, inverter_sn)
 
     # push to database
     json_formatted_str = json.dumps(inverter_detail, indent=2)
