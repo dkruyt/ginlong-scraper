@@ -11,7 +11,7 @@ import urllib
 import urllib.parse
 import time
 import traceback
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date, timedelta
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
 import requests
@@ -151,7 +151,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         inverter_id = inverter_info["id"]
         inverter_sn = inverter_info["sn"]
 
-        if time_category== "":
+        if time_category == "":
             body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '"}'
         else:
             body = '{"id":"' + inverter_id + '","sn":"' + inverter_sn + '","' + time_category + '":"' + time_string + '"}'
@@ -168,12 +168,10 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
         return json.loads(content)["data"]
 
-
     def get_inverter_month_data():
         inverter_detail_body = get_inverter_list_body()
         content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
         return json.loads(content)["data"]
-
 
     def get_inverter_year_data():
         inverter_detail_body = get_inverter_list_body()
@@ -181,30 +179,30 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.loads(content)["data"]
 
     def get_inverter_lastday_data():
-        today = datetime.date.today()
-        last_day = today - datetime.timedelta(days=1)
+        today = date.today()
+        last_day = today - timedelta(days=1)
         str_last_day = last_day.strftime("%Y-%m-%d")
-        inverter_detail_body = get_inverter_list_body('time',str_last_day)
+        inverter_detail_body = get_inverter_list_body('time', str_last_day)
         content = get_solis_cloud_data(endpoint_inverter_dayly, inverter_detail_body)
         return json.loads(content)["data"]
+
     def get_inverter_lastmonth_data():
-        today = datetime.date.today()
+        today = date.today()
         first = today.replace(day=1)
-        lastMonth = first - datetime.timedelta(days=1)
-        str_last_month = lastMonth.strftime("%Y-%m")
-        inverter_detail_body = get_inverter_list_body('month',str_last_month)
+        lastmonth = first - timedelta(days=1)
+        str_last_month = lastmonth.strftime("%Y-%m")
+        inverter_detail_body = get_inverter_list_body('month', str_last_month)
         content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
         return json.loads(content)["data"]
 
     def get_inverter_lastyear_data():
-        today = datetime.date.today()
-        first = today.replace(day=1,month=1)
-        last_year = first - datetime.timedelta(days=1)
+        today = date.today()
+        first = today.replace(day=1, month=1)
+        last_year = first - timedelta(days=1)
         str_last_year = last_year.strftime("%Y")
-        inverter_detail_body = get_inverter_list_body('year',str_last_year)
+        inverter_detail_body = get_inverter_list_body('year', str_last_year)
         content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
         return json.loads(content)["data"]
-
 
     # == MAIN ====================================================================
     def get_inverter_data():
@@ -220,51 +218,41 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
-            #Building fields to export
-            dict_detail=json.loads(inverter_data)
-            dict_lastday=json.loads(inverter_data_last_day)
-            dict_month=json.loads(inverter_month)
-            dict_lastmonth=json.loads(inverter_data_lastmonth)
-            dict_year=json.loads(inverter_year)
-            dict_lastyear=json.loads(inverter_last_year)
+            # Building fields to export
+            dict_detail = json.loads(inverter_data)
+            dict_lastday = json.loads(inverter_data_last_day)
+            dict_month = json.loads(inverter_month)
+            dict_lastmonth = json.loads(inverter_data_lastmonth)
+            dict_year = json.loads(inverter_year)
+            dict_lastyear = json.loads(inverter_last_year)
 
-            dict_fields={}
-            dict_fields['DC_Voltage_PV1']           = dict_detail['uPv1']
-            dict_fields['DC_Voltage_PV2']           = dict_detail['uPv2']
-            dict_fields['DC_Voltage_PV3']           = dict_detail['uPv3']
-            dict_fields['DC_Voltage_PV4']           = dict_detail['uPv4']
-            dict_fields['DC_Current1']              = dict_detail['iPv1']
-            dict_fields['DC_Current2']              = dict_detail['iPv2']
-            dict_fields['DC_Current3']              = dict_detail['iPv3']
-            dict_fields['DC_Current4']              = dict_detail['iPv4']
-            dict_fields['AC_Voltage']               = (dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3'])/3
-            dict_fields['AC_Current']               = (dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3'])/3
-            dict_fields['AC_Power']                 = dict_detail['pac']
-            dict_fields['AC_Frequency']             = dict_detail['fac']
-            dict_fields['DC_Power_PV1']             = dict_detail['pow1']
-            dict_fields['DC_Power_PV2']             = dict_detail['pow2']
-            dict_fields['DC_Power_PV3']             = dict_detail['pow3']
-            dict_fields['DC_Power_PV4']             = dict_detail['pow4']
-            dict_fields['Inverter_Temperature']     = dict_detail['inverterTemperature']
-            dict_fields['Daily_Generation']         = dict_detail['eToday']
-            dict_fields['Monthly_Generation']       = dict_month['energy']
-            dict_fields['Annual_Generation']        = dict_year['energy']
-            dict_fields['Total_Generation']         = dict_detail['eTotal']
-            dict_fields['Generation_Last_Month']    = dict_lastmonth['energy']
-            dict_fields['Power_Grid_Total_Power']   = dict_detail['pSum']
-            dict_fields['Total_On_grid_Generation'] = dict_detail['gridSellTotalEnergy']
-            dict_fields['Total_Energy_Purchased']   = dict_detail['gridPurchasedTotalEnergy']
-            dict_fields['Consumption_Power']        = dict_detail['familyLoadPower']
-            dict_fields['Consumption_Energy']       = dict_detail['homeLoadTotalEnergy']
-            dict_fields['Daily_Energy_Used']        = dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']
-            dict_fields['Monthly_Energy_Used']      = dict_month['energy'] - dict_month['gridSellEnergy']
-            dict_fields['Annual_Energy_Used']       = dict_year['energy'] - dict_year['gridSellEnergy']
-            dict_fields['Battery_Charge_Percent']   = ''
+            dict_fields = {'DC_Voltage_PV1': dict_detail['uPv1'], 'DC_Voltage_PV2': dict_detail['uPv2'],
+                          'DC_Voltage_PV3': dict_detail['uPv3'], 'DC_Voltage_PV4': dict_detail['uPv4'],
+                          'DC_Current1': dict_detail['iPv1'], 'DC_Current2': dict_detail['iPv2'],
+                          'DC_Current3': dict_detail['iPv3'], 'DC_Current4': dict_detail['iPv4'],
+                          'AC_Voltage': (dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3,
+                          'AC_Current': (dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3,
+                          'AC_Power': dict_detail['pac'], 'AC_Frequency': dict_detail['fac'],
+                          'DC_Power_PV1': dict_detail['pow1'], 'DC_Power_PV2': dict_detail['pow2'],
+                          'DC_Power_PV3': dict_detail['pow3'], 'DC_Power_PV4': dict_detail['pow4'],
+                          'Inverter_Temperature': dict_detail['inverterTemperature'],
+                          'Daily_Generation': dict_detail['eToday'], 'Monthly_Generation': dict_month['energy'],
+                          'Annual_Generation': dict_year['energy'], 'Total_Generation': dict_detail['eTotal'],
+                          'Generation_Last_Month': dict_lastmonth['energy'],
+                          'Power_Grid_Total_Power': dict_detail['pSum'],
+                          'Total_On_grid_Generation': dict_detail['gridSellTotalEnergy'],
+                          'Total_Energy_Purchased': dict_detail['gridPurchasedTotalEnergy'],
+                          'Consumption_Power': dict_detail['familyLoadPower'],
+                          'Consumption_Energy': dict_detail['homeLoadTotalEnergy'],
+                          'Daily_Energy_Used': dict_detail['eToday'] - dict_detail['gridSellTodayEnergy'],
+                          'Monthly_Energy_Used': dict_month['energy'] - dict_month['gridSellEnergy'],
+                          'Annual_Energy_Used': dict_year['energy'] - dict_year['gridSellEnergy'],
+                          'Battery_Charge_Percent': ''}
 
-            #Read inverter_detail into dict
+            # Read inverter_detail into dict
             dict_fields.update(dict_detail)
 
-            inverter_json=json.dumps(dict_fields)
+            inverter_json = json.dumps(dict_fields)
 
             json_body = [
                 {
@@ -305,12 +293,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             # make seconds
             tuple_time = time.localtime(update_date / 1000)
             # Get hour and date
-            date = time.strftime("%Y%m%d", tuple_time)
-            hour = time.strftime("%H:%M", tuple_time)
+            pv_date = time.strftime("%Y%m%d", tuple_time)
+            pv_hour = time.strftime("%H:%M", tuple_time)
 
             pvoutput_data = {
-                "d": date,
-                "t": hour,
+                "d": pv_date,
+                "t": pv_hour,
                 "v1": inverter_data['eToday'] * 1000,
                 "v2": inverter_data['pac'],
                 "v3": (inverter_data['eToday'] - inverter_data['gridSellTodayEnergy']) * 1000,
