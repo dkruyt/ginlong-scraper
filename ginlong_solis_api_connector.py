@@ -41,6 +41,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     endpoint_inverter_dayly = "/v1/api/inverterDay"
     endpoint_inverter_monthly = "/v1/api/inverterMonth"
     endpoint_inverter_yearly = "/v1/api/inverterYear"
+    endpoint_inverter_all = "/v1/api/inverterAll"
 
     # == Output ==================================================================
 
@@ -185,6 +186,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
         return json.loads(content)["data"]
 
+    def get_inverter_all_data(inverter_id, inverter_sn):
+        inverter_detail_body = get_inverter_list_body(inverter_id, inverter_sn)
+        content = get_solis_cloud_data(endpoint_inverter_all, inverter_detail_body)
+        return json.loads(content)["data"]
+
     def get_inverter_lastday_data(inverter_id, inverter_sn):
         today = date.today()
         last_day = today - timedelta(days=1)
@@ -213,17 +219,15 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
     # == MAIN ====================================================================
         # Write to Influxdb
-    def write_to_influx_db(inverter_data, inverter_last_day, inverter_month, inverter_last_month, inverter_year, inverter_last_year, update_date):
+    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
             # Building fields to export
             dict_detail = inverter_data
-            dict_lastday = inverter_data_last_day
             dict_month = inverter_month
-            dict_lastmonth = inverter_data_lastmonth
             dict_year = inverter_year
-            dict_lastyear = inverter_last_year
+            dict_all = inverter_all
 
             dict_fields = {'DC_Voltage_PV1': dict_detail['uPv1'], 'DC_Voltage_PV2': dict_detail['uPv2'],
                           'DC_Voltage_PV3': dict_detail['uPv3'], 'DC_Voltage_PV4': dict_detail['uPv4'],
@@ -235,17 +239,17 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                           'DC_Power_PV1': dict_detail['pow1'], 'DC_Power_PV2': dict_detail['pow2'],
                           'DC_Power_PV3': dict_detail['pow3'], 'DC_Power_PV4': dict_detail['pow4'],
                           'Inverter_Temperature': dict_detail['inverterTemperature'],
-                          'Daily_Generation': dict_detail['eToday'], 'Monthly_Generation': dict_month['energy'],
-                          'Annual_Generation': dict_year['energy'], 'Total_Generation': dict_detail['eTotal'],
-                          'Generation_Last_Month': dict_lastmonth['energy'],
+                          'Daily_Generation': dict_detail['eToday'], 'Monthly_Generation': dict_detail['eMonth'],
+                          'Annual_Generation': dict_detail['eYear'], 'Total_Generation': dict_detail['eTotal'],
+                          'Generation_Last_Month': dict_year[-2]['energy'],
                           'Power_Grid_Total_Power': dict_detail['pSum'],
                           'Total_On_grid_Generation': dict_detail['gridSellTotalEnergy'],
                           'Total_Energy_Purchased': dict_detail['gridPurchasedTotalEnergy'],
                           'Consumption_Power': dict_detail['familyLoadPower'],
                           'Consumption_Energy': dict_detail['homeLoadTotalEnergy'],
                           'Daily_Energy_Used': dict_detail['eToday'] - dict_detail['gridSellTodayEnergy'],
-                          'Monthly_Energy_Used': dict_month['energy'] - dict_month['gridSellEnergy'],
-                          'Annual_Energy_Used': dict_year['energy'] - dict_year['gridSellEnergy'],
+                          'Monthly_Energy_Used': dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy'],
+                          'Annual_Energy_Used': dict_detail['eYear'] - dict_detail['gridSellYearEnergy'],
                           'Battery_Charge_Percent': ''}
 
             # Read inverter_detail into dict
@@ -349,11 +353,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     inverter_sn = inverter_result[1]
     inverter_detail = get_inverter_details(inverter_id, inverter_sn)
     timestamp_current = inverter_detail["dataTimestamp"]
-    inverter_data_last_day = get_inverter_lastday_data(inverter_id, inverter_sn)
     inverter_data_month = get_inverter_month_data(inverter_id, inverter_sn)
-    inverter_data_lastmonth = get_inverter_lastmonth_data(inverter_id, inverter_sn)
     inverter_data_year = get_inverter_year_data(inverter_id, inverter_sn)
-    inverter_data_lastyear = get_inverter_lastyear_data(inverter_id, inverter_sn)
+    inverter_data_all = get_inverter_all_data(inverter_id, inverter_sn)
 
     # push to database
     json_formatted_str = json.dumps(inverter_detail, indent=2)
@@ -363,11 +365,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     if influx == "true":
         write_to_influx_db(
             inverter_detail,
-            inverter_data_last_day,
             inverter_data_month,
-            inverter_data_lastmonth,
             inverter_data_year,
-            inverter_data_lastyear,
+            inverter_data_all,
             timestamp_current
         )
 
