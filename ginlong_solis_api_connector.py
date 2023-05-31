@@ -25,7 +25,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
     # solis cloud api config
     api_key_id = ""  # os.environ['SOLIS_CLOUD_API_KEY_ID']
-    api_key_pw = "".encode("utf-8")  # os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
+    api_key_pw = "".encode(
+        "utf-8")  # os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
     domain = "https://www.soliscloud.com"  # os.environ['SOLIS_CLOUD_API_URL']
     port = "13333"  # os.environ['SOLIS_CLOUD_API_PORT']
     url = f'{domain}:{port}'
@@ -47,24 +48,24 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
     # Influx settings
     influx = "true"  # os.environ['USE_INFLUX']
-    influx_database = ""  # os.environ['INFLUX_DATABASE']
-    influx_server = ""  # os.environ['INFLUX_SERVER']
-    influx_port = ""  # os.environ['INFLUX_PORT']
-    influx_user = ""  # os.environ['INFLUX_USER']
-    influx_password = ""  # os.environ['INFLUX_PASSWORD']
-    influx_measurement = ""  # os.environ['INFLUX_MEASUREMENT']
+    influx_database = "baz"  # os.environ['INFLUX_DATABASE']
+    influx_server = "127.0.0.1"  # os.environ['INFLUX_SERVER']
+    influx_port = "1010"  # os.environ['INFLUX_PORT']
+    influx_user = "for"  # os.environ['INFLUX_USER']
+    influx_password = "bar"  # os.environ['INFLUX_PASSWORD']
+    influx_measurement = "foo"  # os.environ['INFLUX_MEASUREMENT']
 
     # pvoutput
     pvoutput = "true"  # os.environ['USE_PVOUTPUT']
-    pvoutput_api = ""  # os.environ['PVOUTPUT_API_KEY']
-    pvoutput_system = ""  # os.environ['PVOUTPUT_SYSTEM_ID']
+    pvoutput_api = "foo"  # os.environ['PVOUTPUT_API_KEY']
+    pvoutput_system = "bar"  # os.environ['PVOUTPUT_SYSTEM_ID']
 
     # MQTT
     mqtt = "true"  # os.environ['USE_MQTT']
-    mqtt_client = ""  # os.environ['MQTT_CLIENT_ID']
-    mqtt_server = ""  # os.environ['MQTT_SERVER']
-    mqtt_username = ""  # os.environ['MQTT_USERNAME']
-    mqtt_password = ""  # os.environ['MQTT_PASSWORD']
+    mqtt_client = "1010"  # os.environ['MQTT_CLIENT_ID']
+    mqtt_server = "127.0.0.1"  # os.environ['MQTT_SERVER']
+    mqtt_username = "foo"  # os.environ['MQTT_USERNAME']
+    mqtt_password = "bar"  # os.environ['MQTT_PASSWORD']
 
     ###
     # == prettify json output ====================================================
@@ -218,7 +219,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.loads(content)["data"]
 
     # == MAIN ====================================================================
-        # Write to Influxdb
+    # Write to Influxdb
     def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
@@ -229,44 +230,48 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_year = inverter_year
             dict_all = inverter_all
 
-            dict_fields = {'DC_Voltage_PV1': dict_detail['uPv1'], 'DC_Voltage_PV2': dict_detail['uPv2'],
-                          'DC_Voltage_PV3': dict_detail['uPv3'], 'DC_Voltage_PV4': dict_detail['uPv4'],
-                          'DC_Current1': dict_detail['iPv1'], 'DC_Current2': dict_detail['iPv2'],
-                          'DC_Current3': dict_detail['iPv3'], 'DC_Current4': dict_detail['iPv4'],
-                          'AC_Voltage': (dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3,
-                          'AC_Current': (dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3,
-                          'AC_Power': dict_detail['pac'], 'AC_Frequency': dict_detail['fac'],
-                          'DC_Power_PV1': dict_detail['pow1'], 'DC_Power_PV2': dict_detail['pow2'],
-                          'DC_Power_PV3': dict_detail['pow3'], 'DC_Power_PV4': dict_detail['pow4'],
-                          'Inverter_Temperature': dict_detail['inverterTemperature'],
-                          'Daily_Generation': dict_detail['eToday'], 'Monthly_Generation': dict_detail['eMonth'],
-                          'Annual_Generation': dict_detail['eYear'], 'Total_Generation': dict_detail['eTotal'],
-                          'Generation_Last_Month': dict_year[-2]['energy'],
-                          'Power_Grid_Total_Power': dict_detail['pSum'],
-                          'Total_On_grid_Generation': dict_detail['gridSellTotalEnergy'],
-                          'Total_Energy_Purchased': dict_detail['gridPurchasedTotalEnergy'],
-                          'Consumption_Power': dict_detail['familyLoadPower'],
-                          'Consumption_Energy': dict_detail['homeLoadTotalEnergy'],
-                          'Daily_Energy_Used': dict_detail['eToday'] - dict_detail['gridSellTodayEnergy'],
-                          'Monthly_Energy_Used': dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy'],
-                          'Annual_Energy_Used': dict_detail['eYear'] - dict_detail['gridSellYearEnergy'],
-                          'Battery_Charge_Percent': ''}
+            dict_fields = {'DC_Voltage_PV1': dict_detail['uPv1'],
+                           'DC_Voltage_PV2': dict_detail['uPv2'],
+                           'DC_Voltage_PV3': dict_detail['uPv3'],
+                           'DC_Voltage_PV4': dict_detail['uPv4'],
+                           'DC_Current1': dict_detail['iPv1'],
+                           'DC_Current2': dict_detail['iPv2'],
+                           'DC_Current3': dict_detail['iPv3'],
+                           'DC_Current4': dict_detail['iPv4'],
+                           'AC_Voltage': (dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3,
+                           'AC_Current': (dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3,
+                           'AC_Power': dict_detail['pac'],
+                           'AC_Frequency': dict_detail['fac'],
+                           'DC_Power_PV1': dict_detail['pow1'],
+                           'DC_Power_PV2': dict_detail['pow2'],
+                           'DC_Power_PV3': dict_detail['pow3'],
+                           'DC_Power_PV4': dict_detail['pow4'],
+                           'Inverter_Temperature': dict_detail['inverterTemperature'],
+                           'Daily_Generation': dict_detail['eToday'],
+                           'Monthly_Generation': dict_detail['eMonth'],
+                           'Annual_Generation': dict_detail['eYear'],
+                           'Total_Generation': dict_detail['eTotal'],
+                           'Generation_Last_Month': dict_year[-2]['energy'],
+                           'Power_Grid_Total_Power': dict_detail['psum'],
+                           'Total_On_grid_Generation': dict_detail['gridSellTotalEnergy'],
+                           'Total_Energy_Purchased': dict_detail['gridPurchasedTotalEnergy'],
+                           'Consumption_Power': dict_detail['familyLoadPower'],
+                           'Consumption_Energy': dict_detail['homeLoadTotalEnergy'],
+                           'Daily_Energy_Used': dict_detail['eToday'] - dict_detail['gridSellTodayEnergy'],
+                           'Monthly_Energy_Used': dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy'],
+                           'Annual_Energy_Used': dict_detail['eYear'] - dict_detail['gridSellYearEnergy'],
+                           'Battery_Charge_Percent': ''
+                           }
 
             # Read inverter_detail into dict
             dict_fields.update(dict_detail)
 
             inverter_json = json.dumps(dict_fields)
 
-            json_body = [
-                {
-                    "measurement": influx_measurement,
-                    "tags": {
-                        "deviceId": device_id
-                    },
-                    "time": int(update_date),
-                    "fields": inverter_json
-                }
-            ]
+            json_body = '{"measurement": "' + influx_measurement + \
+                        '","tags": {"deviceId": ' + str(device_id) + \
+                        '}, "time": ' + update_date + \
+                        ', "fields": ' + inverter_json + '}'
 
             logging.debug("sent to influxDb -> %s", prettify_json(json_body))
 
@@ -400,7 +405,7 @@ elif GET_LOGLEVEL.lower() == "error":
 elif GET_LOGLEVEL.lower() == "debug":
     LOGLEVEL = logging.DEBUG
 
-logging.basicConfig(level=LOGLEVEL, format='%(asctime)s %(levelname)s %(message)s')
+logging.basicConfig(level=LOGLEVEL, format='%(asctime)s %(levelname)s %(message)s on %(lineno)d - %(filename)s -> %(funcName)s')
 logging.info('Started ginlong-solis-api-connector')
 
 schedule.every(1).minutes.at(':00').do(main).run()
