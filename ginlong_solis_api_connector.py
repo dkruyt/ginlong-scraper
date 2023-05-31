@@ -46,7 +46,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     # == Output ==================================================================
 
     # Influx settings
-    influx = ""  # os.environ['USE_INFLUX']
+    influx = "true"  # os.environ['USE_INFLUX']
     influx_database = ""  # os.environ['INFLUX_DATABASE']
     influx_server = ""  # os.environ['INFLUX_SERVER']
     influx_port = ""  # os.environ['INFLUX_PORT']
@@ -55,12 +55,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     influx_measurement = ""  # os.environ['INFLUX_MEASUREMENT']
 
     # pvoutput
-    pvoutput = ""  # os.environ['USE_PVOUTPUT']
+    pvoutput = "true"  # os.environ['USE_PVOUTPUT']
     pvoutput_api = ""  # os.environ['PVOUTPUT_API_KEY']
     pvoutput_system = ""  # os.environ['PVOUTPUT_SYSTEM_ID']
 
     # MQTT
-    mqtt = ""  # os.environ['USE_MQTT']
+    mqtt = "true"  # os.environ['USE_MQTT']
     mqtt_client = ""  # os.environ['MQTT_CLIENT_ID']
     mqtt_server = ""  # os.environ['MQTT_SERVER']
     mqtt_username = ""  # os.environ['MQTT_USERNAME']
@@ -132,7 +132,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 "Authorization": authorization,
             }
             data_content = execute_request(url + url_part, data, headers)
-            logging.debug(url + url_part + "->" + prettify_json(data_content))
+            logging.debug(url + url_part + " -> " + prettify_json(data_content))
             if data_content != "ERROR":
                 return data_content
 
