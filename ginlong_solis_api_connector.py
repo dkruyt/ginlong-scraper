@@ -186,9 +186,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
             # Building fields to export
             dict_detail = inverter_data
-            dict_month = inverter_month
+            dict_month = inverter_month  # pylint: unused-variable
             dict_year = inverter_year
-            dict_all = inverter_all
+            dict_all = inverter_all  # pylint: unused-variable
 
             dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1']),
                            'DC_Voltage_PV2': float(dict_detail['uPv2']),
