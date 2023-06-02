@@ -6,8 +6,8 @@ ARG VCS_REF
 
 LABEL maintainer="Gentleman1983, TobiO79" \
   org.opencontainers.image.created=$BUILD_DATE \
-  org.opencontainers.image.url="https://github.com/Gentleman1983/ginlong-scraper" \
-  org.opencontainers.image.source="https://github.com/Gentleman1983/ginlong-scraper" \
+  org.opencontainers.image.url="https://github.com/Gentleman1983/ginlong_solis_api_connector" \
+  org.opencontainers.image.source="https://github.com/Gentleman1983/ginlong_solis_api_connector" \
   org.opencontainers.image.version=$VERSION \
   org.opencontainers.image.revision=$VCS_REF \
   org.opencontainers.image.vendor="Gentleman1983" \
