@@ -211,17 +211,17 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Daily_Generation': float(dict_detail['eToday']),
                            'Monthly_Generation': float(dict_detail['eMonth']),
                            'Annual_Generation': float(dict_detail['eYear']),
-                           'Total_Generation': float(dict_detail['eTotal']),
+                           'Total_Generation': float(dict_detail['eTotal']*1000),
                            'Generation_Last_Month': float(dict_year[-2]['energy']),
                            'Power_Grid_Total_Power': float(dict_detail['psum']*1000),
                            'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy']),
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy']),
-                           'Consumption_Power': float(dict_detail['familyLoadPower']),
+                           'Consumption_Power': float(dict_detail['familyLoadPower']*1000),
                            'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy']),
                            'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),
                            'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),
                            'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),
-                           'updateDate': dict_detail['dataTimestamp']
+                           'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
             # Read inverter_detail into dict
