@@ -30,7 +30,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     domain = os.environ['SOLIS_CLOUD_API_URL']
     port = os.environ['SOLIS_CLOUD_API_PORT']
     url = f'{domain}:{port}'
-    device_id = 0   # os.environ['SOLIS_CLOUD_API_INVERTER_ID']
+    device_id = os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
     # == Constants ===============================================================
     http_function = "POST"
@@ -196,6 +196,20 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         content = get_solis_cloud_data(endpoint_inverter_all, inverter_detail_body)
         return json.loads(content)["data"]
 
+    def get_ac_voltage(inverter_data):
+        if int(inverter_data['acOutputType']) == 0:  # single phase inverter
+            ac_voltage = float(inverter_data['uAc1'])
+        else:
+            ac_voltage = float((inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3)  # pylint: disable=line-too-long
+        return ac_voltage
+
+    def get_ac_current(inverter_data):
+        if int(inverter_data['acOutputType']) == 0:  # single phase inverter
+            ac_current = float(inverter_data['iAc1'])
+        else:
+            ac_current = float((inverter_data['iAc1'] + inverter_data['iAc2'] + inverter_data['iAc3']) / 3)  # pylint: disable=line-too-long
+        return ac_current
+
     # == MAIN ====================================================================
     # Write to Influxdb
     def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
@@ -216,8 +230,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'DC_Current2': float(dict_detail['iPv2']),
                            'DC_Current3': float(dict_detail['iPv3']),
                            'DC_Current4': float(dict_detail['iPv4']),
-                           'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),  # pylint: disable=line-too-long
-                           'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),  # pylint: disable=line-too-long
+                           'AC_Voltage': get_ac_voltage(dict_detail),
+                           'AC_Current': get_ac_current(dict_detail),
                            'AC_Power': float(dict_detail['pac'] * 1000),
                            'AC_Frequency': float(dict_detail['fac']),
                            'DC_Power_PV1': float(dict_detail['pow1']),
@@ -300,7 +314,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 # temperature (float, °C), not available by inverter data
                 # "v5": 0.0,
                 # voltage (float, V)
-                "v6": (inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3
+                "v6": get_ac_voltage(inverter_data)
             }
             # Python3 change
             encoded = urllib.parse.urlencode(pvoutput_data)
