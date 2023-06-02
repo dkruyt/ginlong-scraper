@@ -30,7 +30,6 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     domain = os.environ['SOLIS_CLOUD_API_URL']
     port = os.environ['SOLIS_CLOUD_API_PORT']
     url = f'{domain}:{port}'
-    # lan = os.environ['GINLONG_LANG']
     device_id = 0   # os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
     # == Constants ===============================================================
