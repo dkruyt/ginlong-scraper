@@ -146,11 +146,19 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         inverter_info = json.loads(data_content)["data"]["page"]["records"][device_id]
         return inverter_info["id"], inverter_info["sn"]
 
-    def get_inverter_list_body(inverter_id_val, inverter_sn_val, time_category='', time_string='') -> str:
+    def get_inverter_list_body(
+            inverter_id_val,
+            inverter_sn_val,
+            time_category='',
+            time_string=''
+    ) -> str:
         if time_category == "":
             body = '{"id":"' + inverter_id_val + '","sn":"' + inverter_sn_val + '"}'
         else:
-            body = '{"id":"' + inverter_id_val + '","sn":"' + inverter_sn_val + '","' + time_category + '":"' + time_string + '"}'
+            body = '{"id":"' + inverter_id_val + \
+                   '","sn":"' + inverter_sn_val + \
+                   '","' + time_category + \
+                   '":"' + time_string + '"}'
         logging.debug("body: %s", body)
         return body
 
@@ -162,14 +170,24 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     def get_inverter_month_data(inverter_id_val, inverter_sn_val):
         today = date.today()
         str_month = today.strftime("%Y-%m")
-        inverter_detail_body = get_inverter_list_body(inverter_id_val, inverter_sn_val, 'month', str_month)
+        inverter_detail_body = get_inverter_list_body(
+            inverter_id_val,
+            inverter_sn_val,
+            'month',
+            str_month
+        )
         content = get_solis_cloud_data(endpoint_inverter_monthly, inverter_detail_body)
         return json.loads(content)["data"]
 
     def get_inverter_year_data(inverter_id_val, inverter_sn_val):
         today = date.today()
         str_year = today.strftime("%Y")
-        inverter_detail_body = get_inverter_list_body(inverter_id_val, inverter_sn_val, 'year', str_year)
+        inverter_detail_body = get_inverter_list_body(
+            inverter_id_val,
+            inverter_sn_val,
+            'year',
+            str_year
+        )
         content = get_solis_cloud_data(endpoint_inverter_yearly, inverter_detail_body)
         return json.loads(content)["data"]
 
@@ -198,8 +216,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'DC_Current2': float(dict_detail['iPv2']),
                            'DC_Current3': float(dict_detail['iPv3']),
                            'DC_Current4': float(dict_detail['iPv4']),
-                           'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),
-                           'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),
+                           'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),  # pylint: line-too-long
+                           'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),  # pylint: line-too-long
                            'AC_Power': float(dict_detail['pac']*1000),
                            'AC_Frequency': float(dict_detail['fac']),
                            'DC_Power_PV1': float(dict_detail['pow1']),
@@ -217,9 +235,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy']),
                            'Consumption_Power': float(dict_detail['familyLoadPower']*1000),
                            'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy']),
-                           'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),
-                           'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),
-                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),
+                           'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),  # pylint: line-too-long
+                           'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),  # pylint: line-too-long
+                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),  # pylint: line-too-long
                            'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
