@@ -227,14 +227,16 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             # Read inverter_detail into dict
             dict_fields.update(dict_detail)
 
-            inverter_json = json.dumps(dict_fields)
-
-            json_body = '{"measurement": "' + influx_measurement + \
-                        '","tags": {"deviceId": ' + str(device_id) + \
-                        '}, "time": ' + update_date + \
-                        ', "fields": ' + inverter_json + '}'
-
-            logging.debug("sent to influxDb -> %s", prettify_json(json_body))
+            influx_to_submit = [
+                {
+                    "measurement": influx_measurement,
+                    "tags": {
+                        "deviceId": device_id
+                    },
+                    "time": int(update_date),
+                    "fields": dict_fields
+                }
+            ]
 
             if influx_user != "" and influx_password != "":
                 client = InfluxDBClient(host=influx_server, port=influx_port, username=influx_user,
@@ -243,7 +245,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 client = InfluxDBClient(host=influx_server, port=influx_port)
 
             client.switch_database(influx_database)
-            success = client.write_points(json_body, time_precision='ms', protocol='json')
+            success = client.write_points(influx_to_submit, time_precision='ms')
             if not success:
                 logging.error('Error writing to influx database')
 
