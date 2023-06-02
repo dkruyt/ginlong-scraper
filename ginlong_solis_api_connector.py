@@ -279,7 +279,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             encoded = urllib.parse.urlencode(pvoutput_data)
 
             pvoutput_result = requests.post(
-                "http://pvoutput.org/service/r2/addstatus.jsp",
+                "https://pvoutput.org/service/r2/addstatus.jsp",
                 data=encoded,
                 headers=headers,
                 timeout=120
