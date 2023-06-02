@@ -220,7 +220,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy']),
                            'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),
                            'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),
-                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy'])
+                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),
+                           'UpdateDate': dict_detail['dataTimestamp']
                            }
 
             # Read inverter_detail into dict
@@ -261,7 +262,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             }
 
             # make seconds
-            tuple_time = time.localtime(update_date / 1000)
+            tuple_time = time.localtime(int(update_date) / 1000)
             # Get hour and date
             pv_date = time.strftime("%Y%m%d", tuple_time)
             pv_hour = time.strftime("%H:%M", tuple_time)
