@@ -95,7 +95,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             error_string = "urlopen exception: " + str(ex)
             traceback.print_exc()
 
-        logging.error(target_url + " -> " + error_string)
+        logging.error(target_url + " -> " + error_string)  # pylint: used-before-assignment
         time.sleep(60)  # retry after 1 minute
         return "ERROR"
 
