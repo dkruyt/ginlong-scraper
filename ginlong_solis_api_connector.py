@@ -24,14 +24,13 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     """worker loop"""
 
     # solis cloud api config
-    api_key_id = ""  # os.environ['SOLIS_CLOUD_API_KEY_ID']
-    api_key_pw = "".encode(
-        "utf-8")  # os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
-    domain = "https://www.soliscloud.com"  # os.environ['SOLIS_CLOUD_API_URL']
-    port = "13333"  # os.environ['SOLIS_CLOUD_API_PORT']
+    api_key_id = os.environ['SOLIS_CLOUD_API_KEY_ID']
+    api_key_pw = os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
+    domain = os.environ['SOLIS_CLOUD_API_URL']
+    port = os.environ['SOLIS_CLOUD_API_PORT']
     url = f'{domain}:{port}'
     # lan = os.environ['GINLONG_LANG']
-    device_id = 0  # os.environ['SOLIS_CLOUD_API_INVERTER_ID']
+    device_id = os.environ['SOLIS_CLOUD_API_INVERTER_ID']
 
     # == Constants ===============================================================
     http_function = "POST"
@@ -47,25 +46,25 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     # == Output ==================================================================
 
     # Influx settings
-    influx = "true"  # os.environ['USE_INFLUX']
-    influx_database = "baz"  # os.environ['INFLUX_DATABASE']
-    influx_server = "127.0.0.1"  # os.environ['INFLUX_SERVER']
-    influx_port = "1010"  # os.environ['INFLUX_PORT']
-    influx_user = "for"  # os.environ['INFLUX_USER']
-    influx_password = "bar"  # os.environ['INFLUX_PASSWORD']
-    influx_measurement = "foo"  # os.environ['INFLUX_MEASUREMENT']
+    influx = os.environ['USE_INFLUX']
+    influx_database = os.environ['INFLUX_DATABASE']
+    influx_server = os.environ['INFLUX_SERVER']
+    influx_port = os.environ['INFLUX_PORT']
+    influx_user = os.environ['INFLUX_USER']
+    influx_password = os.environ['INFLUX_PASSWORD']
+    influx_measurement = os.environ['INFLUX_MEASUREMENT']
 
     # pvoutput
-    pvoutput = "true"  # os.environ['USE_PVOUTPUT']
-    pvoutput_api = "foo"  # os.environ['PVOUTPUT_API_KEY']
-    pvoutput_system = "bar"  # os.environ['PVOUTPUT_SYSTEM_ID']
+    pvoutput = os.environ['USE_PVOUTPUT']
+    pvoutput_api = os.environ['PVOUTPUT_API_KEY']
+    pvoutput_system = os.environ['PVOUTPUT_SYSTEM_ID']
 
     # MQTT
-    mqtt = "true"  # os.environ['USE_MQTT']
-    mqtt_client = "1010"  # os.environ['MQTT_CLIENT_ID']
-    mqtt_server = "127.0.0.1"  # os.environ['MQTT_SERVER']
-    mqtt_username = "foo"  # os.environ['MQTT_USERNAME']
-    mqtt_password = "bar"  # os.environ['MQTT_PASSWORD']
+    mqtt = os.environ['USE_MQTT']
+    mqtt_client = os.environ['MQTT_CLIENT_ID']
+    mqtt_server = os.environ['MQTT_SERVER']
+    mqtt_username = os.environ['MQTT_USERNAME']
+    mqtt_password = os.environ['MQTT_PASSWORD']
 
     ###
     # == prettify json output ====================================================
