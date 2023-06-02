@@ -245,8 +245,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Total_Generation': float(dict_detail['eTotal'] * 1000),
                            'Generation_Last_Month': float(dict_year[-2]['energy']),
                            'Power_Grid_Total_Power': float(dict_detail['psum'] * 1000),
-                           'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy']),
-                           'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy']),
+                           'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy'] * 1000),
+                           'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy'] * 1000),
                            'Consumption_Power': float(dict_detail['familyLoadPower'] * 1000),
                            'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy']),
                            'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),  # pylint: disable=line-too-long
