@@ -376,7 +376,7 @@ elif GET_LOGLEVEL.lower() == "error":
 elif GET_LOGLEVEL.lower() == "debug":
     LOGLEVEL = logging.DEBUG
 
-logging.basicConfig(level=LOGLEVEL, format='%(asctime)s %(levelname)s %(message)s on %(lineno)d - %(filename)s -> %(funcName)s')
+logging.basicConfig(level=LOGLEVEL, format='%(asctime)s %(levelname)s %(message)s')
 logging.info('Started ginlong-solis-api-connector')
 
 schedule.every(5).minutes.at(':00').do(main).run()
