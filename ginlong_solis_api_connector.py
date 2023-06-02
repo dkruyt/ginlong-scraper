@@ -95,7 +95,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             error_string = "urlopen exception: " + str(ex)
             traceback.print_exc()
 
-        logging.error(target_url + " -> " + error_string)  # pylint: used-before-assignment
+        logging.error(target_url + " -> " + error_string)  # pylint: disable=used-before-assignment
         time.sleep(60)  # retry after 1 minute
         return "ERROR"
 
@@ -204,9 +204,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
             # Building fields to export
             dict_detail = inverter_data
-            dict_month = inverter_month  # pylint: unused-variable
+            dict_month = inverter_month  # pylint: disable=unused-variable
             dict_year = inverter_year
-            dict_all = inverter_all  # pylint: unused-variable
+            dict_all = inverter_all  # pylint: disable=unused-variable
 
             dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1']),
                            'DC_Voltage_PV2': float(dict_detail['uPv2']),
@@ -216,8 +216,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'DC_Current2': float(dict_detail['iPv2']),
                            'DC_Current3': float(dict_detail['iPv3']),
                            'DC_Current4': float(dict_detail['iPv4']),
-                           'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),  # pylint: line-too-long
-                           'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),  # pylint: line-too-long
+                           'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),  # pylint: disable=line-too-long
+                           'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),  # pylint: disable=line-too-long
                            'AC_Power': float(dict_detail['pac']*1000),
                            'AC_Frequency': float(dict_detail['fac']),
                            'DC_Power_PV1': float(dict_detail['pow1']),
@@ -235,9 +235,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy']),
                            'Consumption_Power': float(dict_detail['familyLoadPower']*1000),
                            'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy']),
-                           'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),  # pylint: line-too-long
-                           'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),  # pylint: line-too-long
-                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),  # pylint: line-too-long
+                           'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),  # pylint: disable=line-too-long
+                           'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),  # pylint: disable=line-too-long
+                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),  # pylint: disable=line-too-long
                            'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
