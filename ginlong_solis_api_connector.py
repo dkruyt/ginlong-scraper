@@ -200,14 +200,14 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         if int(inverter_data['acOutputType']) == 0:  # single phase inverter
             ac_voltage = float(inverter_data['uAc1'])
         else:
-            ac_voltage = float((inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3)
+            ac_voltage = float((inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3)  # pylint: disable=line-too-long
         return ac_voltage
 
     def get_ac_current(inverter_data):
         if int(inverter_data['acOutputType']) == 0:  # single phase inverter
             ac_current = float(inverter_data['iAc1'])
         else:
-            ac_current = float((inverter_data['iAc1'] + inverter_data['iAc2'] + inverter_data['iAc3']) / 3)
+            ac_current = float((inverter_data['iAc1'] + inverter_data['iAc2'] + inverter_data['iAc3']) / 3)  # pylint: disable=line-too-long
         return ac_current
 
     # == MAIN ====================================================================
