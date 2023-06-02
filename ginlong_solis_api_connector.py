@@ -282,7 +282,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 client = InfluxDBClient(host=influx_server, port=influx_port)
 
             client.switch_database(influx_database)
-            success = client.write_points(json_body, time_precision='ms')
+            success = client.write_points(json_body, time_precision='ms',protocol='json')
             if not success:
                 logging.error('Error writing to influx database')
 
