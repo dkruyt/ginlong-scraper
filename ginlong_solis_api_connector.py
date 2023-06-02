@@ -220,8 +220,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Consumption_Energy': dict_detail['homeLoadTotalEnergy'],
                            'Daily_Energy_Used': dict_detail['eToday'] - dict_detail['gridSellTodayEnergy'],
                            'Monthly_Energy_Used': dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy'],
-                           'Annual_Energy_Used': dict_detail['eYear'] - dict_detail['gridSellYearEnergy'],
-                           'Battery_Charge_Percent': dict_detail['batteryPowerPec']
+                           'Annual_Energy_Used': dict_detail['eYear'] - dict_detail['gridSellYearEnergy']
                            }
 
             # Read inverter_detail into dict
