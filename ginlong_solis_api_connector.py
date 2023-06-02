@@ -28,9 +28,10 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     api_key_id = os.environ['SOLIS_CLOUD_API_KEY_ID']
     api_key_pw = os.environ['SOLIS_CLOUD_API_KEY_SECRET'].encode("utf-8")
     domain = os.environ['SOLIS_CLOUD_API_URL']
-    port = os.environ['SOLIS_CLOUD_API_PORT']
+    port = int(os.environ['SOLIS_CLOUD_API_PORT'])
     url = f'{domain}:{port}'
     device_id = int(os.environ['SOLIS_CLOUD_API_INVERTER_ID'])
+
 
     # == Constants ===============================================================
     http_function = "POST"
@@ -48,7 +49,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     influx = os.environ['USE_INFLUX']
     influx_database = os.environ['INFLUX_DATABASE']
     influx_server = os.environ['INFLUX_SERVER']
-    influx_port = os.environ['INFLUX_PORT']
+    influx_port = int(os.environ['INFLUX_PORT'])
     influx_user = os.environ['INFLUX_USER']
     influx_password = os.environ['INFLUX_PASSWORD']
     influx_measurement = os.environ['INFLUX_MEASUREMENT']
