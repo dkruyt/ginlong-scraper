@@ -218,7 +218,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'DC_Current4': float(dict_detail['iPv4']),
                            'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),  # pylint: disable=line-too-long
                            'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),  # pylint: disable=line-too-long
-                           'AC_Power': float(dict_detail['pac']*1000),
+                           'AC_Power': float(dict_detail['pac'] * 1000),
                            'AC_Frequency': float(dict_detail['fac']),
                            'DC_Power_PV1': float(dict_detail['pow1']),
                            'DC_Power_PV2': float(dict_detail['pow2']),
@@ -228,12 +228,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Daily_Generation': float(dict_detail['eToday']),
                            'Monthly_Generation': float(dict_detail['eMonth']),
                            'Annual_Generation': float(dict_detail['eYear']),
-                           'Total_Generation': float(dict_detail['eTotal']*1000),
+                           'Total_Generation': float(dict_detail['eTotal'] * 1000),
                            'Generation_Last_Month': float(dict_year[-2]['energy']),
-                           'Power_Grid_Total_Power': float(dict_detail['psum']*1000),
+                           'Power_Grid_Total_Power': float(dict_detail['psum'] * 1000),
                            'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy']),
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy']),
-                           'Consumption_Power': float(dict_detail['familyLoadPower']*1000),
+                           'Consumption_Power': float(dict_detail['familyLoadPower'] * 1000),
                            'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy']),
                            'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),  # pylint: disable=line-too-long
                            'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),  # pylint: disable=line-too-long
