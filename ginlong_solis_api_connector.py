@@ -267,12 +267,21 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             pv_hour = time.strftime("%H:%M", tuple_time)
 
             pvoutput_data = {
+                # output date [yyyymmdd] as int
                 "d": pv_date,
+                # time [hh:mm]
                 "t": pv_hour,
+                # energy generation (int, Wh)
                 "v1": inverter_data['eToday'] * 1000,
-                "v2": inverter_data['pac'],
-                "v3": (inverter_data['eToday'] - inverter_data['gridSellTodayEnergy']) * 1000,
-                "v4": inverter_data['familyLoadPower'],
+                # power generation (int, W)
+                "v2": inverter_data['pac'] * 1000,
+                # energy consumption (int, Wh)
+                "v3": inverter_data['familyLoadPower'] * 1000,
+                # power consumption (int, W)
+                "v4": inverter_data['homeLoadTotalEnergy'],
+                # temperature (float, °C), not available by inverter data
+                # "v5": 0.0,
+                # voltage (float, V)
                 "v6": (inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3
             }
             # Python3 change
