@@ -57,6 +57,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     pvoutput = os.environ['USE_PVOUTPUT']
     pvoutput_api = os.environ['PVOUTPUT_API_KEY']
     pvoutput_system = os.environ['PVOUTPUT_SYSTEM_ID']
+    pvex7 = os.environ['PVOUTPUT_EXTENDED_V7']
+    pvex8 = os.environ['PVOUTPUT_EXTENDED_V8']
+    pvex9 = os.environ['PVOUTPUT_EXTENDED_V9']
+    pvex10 = os.environ['PVOUTPUT_EXTENDED_V10']
+    pvex11 = os.environ['PVOUTPUT_EXTENDED_V11']
+    pvex12 = os.environ['PVOUTPUT_EXTENDED_V12']
 
     # MQTT
     mqtt = os.environ['USE_MQTT']
