@@ -201,7 +201,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'DC_Current4': float(dict_detail['iPv4']),
                            'AC_Voltage': float((dict_detail['uAc1'] + dict_detail['uAc2'] + dict_detail['uAc3']) / 3),
                            'AC_Current': float((dict_detail['iAc1'] + dict_detail['iAc2'] + dict_detail['iAc3']) / 3),
-                           'AC_Power': float(dict_detail['pac']),
+                           'AC_Power': float(dict_detail['pac']*1000),
                            'AC_Frequency': float(dict_detail['fac']),
                            'DC_Power_PV1': float(dict_detail['pow1']),
                            'DC_Power_PV2': float(dict_detail['pow2']),
@@ -213,7 +213,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Annual_Generation': float(dict_detail['eYear']),
                            'Total_Generation': float(dict_detail['eTotal']),
                            'Generation_Last_Month': float(dict_year[-2]['energy']),
-                           'Power_Grid_Total_Power': float(dict_detail['psum']),
+                           'Power_Grid_Total_Power': float(dict_detail['psum']*1000),
                            'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy']),
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy']),
                            'Consumption_Power': float(dict_detail['familyLoadPower']),
@@ -221,7 +221,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),
                            'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),
                            'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),
-                           'UpdateDate': dict_detail['dataTimestamp']
+                           'UpdateDate': int(dict_detail['dataTimestamp'])
                            }
 
             # Read inverter_detail into dict
@@ -359,7 +359,7 @@ def main():
 
 global NEXT_RUN_YES  # pylint: disable=global-at-module-level
 
-GET_LOGLEVEL = "debug"  # os.environ['LOG_LEVEL']
+GET_LOGLEVEL = os.environ['LOG_LEVEL']
 LOGLEVEL = logging.INFO
 if GET_LOGLEVEL.lower() == "info":
     LOGLEVEL = logging.INFO
@@ -371,8 +371,8 @@ elif GET_LOGLEVEL.lower() == "debug":
 logging.basicConfig(level=LOGLEVEL, format='%(asctime)s %(levelname)s %(message)s on %(lineno)d - %(filename)s -> %(funcName)s')
 logging.info('Started ginlong-solis-api-connector')
 
-schedule.every(1).minutes.at(':00').do(main).run()
-# schedule.every(5).minutes.at(':00').do(main).run()
+schedule.every(5).minutes.at(':00').do(main).run()
+
 while True:
     if NEXT_RUN_YES == 1:
         next_run = schedule.next_run().strftime('%d/%m/%Y %H:%M:%S')
