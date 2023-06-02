@@ -11,6 +11,7 @@ import urllib
 import urllib.parse
 import time
 import traceback
+import os
 from datetime import datetime, timezone, date, timedelta
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
