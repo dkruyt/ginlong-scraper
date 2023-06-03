@@ -31,6 +31,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     port = int(os.environ['SOLIS_CLOUD_API_PORT'])
     url = f'{domain}:{port}'
     device_id = int(os.environ['SOLIS_CLOUD_API_INVERTER_ID'])
+    override_single_phase_inverter = os.environ['SOLIS_CLOUD_API_OVERRIDE_SINGLE_PHASE_INVERTER']
 
 
     # == Constants ===============================================================
@@ -204,18 +205,17 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.loads(content)["data"]
 
     def get_ac_voltage(inverter_data):
-        if int(inverter_data['acOutputType']) == 0:  # single phase inverter
-            ac_voltage = float(inverter_data['uAc1'])
-        else:
-            ac_voltage = float((inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3)  # pylint: disable=line-too-long
-        return ac_voltage
+        return get_average_value(inverter_data, 'uAc1', 'uAc2', 'uAc3')
 
     def get_ac_current(inverter_data):
-        if int(inverter_data['acOutputType']) == 0:  # single phase inverter
-            ac_current = float(inverter_data['iAc1'])
+        return get_average_value(inverter_data, 'iAc1', 'iAc2', 'iAc3')
+
+    def get_average_value(inverter_data, field_phase_1, field_phase_2, field_phase_3):
+        if int(inverter_data['acOutputType']) == 0 or override_single_phase_inverter == 'true':  # pylint: disable=line-too-long
+            average_value = float(inverter_data[field_phase_1])
         else:
-            ac_current = float((inverter_data['iAc1'] + inverter_data['iAc2'] + inverter_data['iAc3']) / 3)  # pylint: disable=line-too-long
-        return ac_current
+            average_value = float((inverter_data[field_phase_1] + inverter_data[field_phase_2] + inverter_data[field_phase_3]) / 3)  # pylint: disable=line-too-long
+        return average_value
 
     # == MAIN ====================================================================
     # Write to Influxdb
