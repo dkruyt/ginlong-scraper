@@ -38,6 +38,12 @@ and just vary the deviceId in the environment variables.
 | USE_PVOUTPUT                | No        | Set to true if you want to use PvOutput as output                                                    | `false`                      |
 | PVOUTPUT_API_KEY            | No        | PvOutput API key                                                                                     | *empty*                      |
 | PVOUTPUT_SYSTEM_ID          | No        | PvOutput system ID                                                                                   | *empty*                      |
+| PVOUTPUT_EXTENDED_V7        | No        | Set Extendet Output v7 to this API Key from interterDetail (leave blank if not donated)              | *empty*                      |
+| PVOUTPUT_EXTENDED_V8        | No        | Set Extendet Output v8 to this API Key from interterDetail (leave blank if not donated)              | *empty*                      |
+| PVOUTPUT_EXTENDED_V9        | No        | Set Extendet Output v9 to this API Key from interterDetail (leave blank if not donated)              | *empty*                      |
+| PVOUTPUT_EXTENDED_V10       | No        | Set Extendet Output v10 to this API Key from interterDetail (leave blank if not donated)             | *empty*                      |
+| PVOUTPUT_EXTENDED_V11       | No        | Set Extendet Output v11 to this API Key from interterDetail (leave blank if not donated)             | *empty*                      |
+| PVOUTPUT_EXTENDED_V12       | No        | Set Extendet Output v12 to this API Key from interterDetail (leave blank if not donated)             | *empty*                      |
 | USE_MQTT                    | No        | Set to true if you want to use MQTT as output                                                        | `false`                      |
 | MQTT_CLIENT_ID              | No        | MQTT client ID                                                                                       | `pv`                         |
 | MQTT_SERVER                 | No        | MQTT server                                                                                          | `localhost`                  |
