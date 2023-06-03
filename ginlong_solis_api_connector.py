@@ -58,6 +58,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     pvoutput = os.environ['USE_PVOUTPUT']
     pvoutput_api = os.environ['PVOUTPUT_API_KEY']
     pvoutput_system = os.environ['PVOUTPUT_SYSTEM_ID']
+    pvex7 = os.environ['PVOUTPUT_EXTENDED_V7']
+    pvex8 = os.environ['PVOUTPUT_EXTENDED_V8']
+    pvex9 = os.environ['PVOUTPUT_EXTENDED_V9']
+    pvex10 = os.environ['PVOUTPUT_EXTENDED_V10']
+    pvex11 = os.environ['PVOUTPUT_EXTENDED_V11']
+    pvex12 = os.environ['PVOUTPUT_EXTENDED_V12']
 
     # MQTT
     mqtt = os.environ['USE_MQTT']
@@ -317,6 +323,20 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 # voltage (float, V)
                 "v6": get_ac_voltage(inverter_data)
             }
+
+            if pvex7 != "":
+                pvoutput_data["v7"] = inverter_data[pvex7]
+            if pvex8 != "":
+                pvoutput_data["v8"] = inverter_data[pvex8]
+            if pvex9 != "":
+                pvoutput_data["v9"] = inverter_data[pvex9]
+            if pvex10 != "":
+                pvoutput_data["v10"] = inverter_data[pvex10]
+            if pvex11 != "":
+                pvoutput_data["v11"] = inverter_data[pvex11]
+            if pvex12 != "":
+                pvoutput_data["v12"] = inverter_data[pvex12]
+
             # Python3 change
             encoded = urllib.parse.urlencode(pvoutput_data)
 
