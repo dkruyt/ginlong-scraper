@@ -322,6 +322,20 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 # voltage (float, V)
                 "v6": get_ac_voltage(inverter_data)
             }
+
+            if pvex7 != "":
+                pvoutput_data["v7"] = inverter_data[pvex7]
+            if pvex8 != "":
+                pvoutput_data["v8"] = inverter_data[pvex8]
+            if pvex9 != "":
+                pvoutput_data["v9"] = inverter_data[pvex9]
+            if pvex10 != "":
+                pvoutput_data["v10"] = inverter_data[pvex10]
+            if pvex11 != "":
+                pvoutput_data["v11"] = inverter_data[pvex11]
+            if pvex12 != "":
+                pvoutput_data["v12"] = inverter_data[pvex12]
+
             # Python3 change
             encoded = urllib.parse.urlencode(pvoutput_data)
 
