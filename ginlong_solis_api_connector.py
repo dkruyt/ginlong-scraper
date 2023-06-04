@@ -315,9 +315,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 # power generation (int, W)
                 "v2": inverter_data['pac'] * 1000,
                 # energy consumption (int, Wh)
-                "v3": inverter_data['familyLoadPower'] * 1000,
+                "v3": inverter_data['homeLoadTotalEnergy'] * 1000,
                 # power consumption (int, W)
-                "v4": inverter_data['homeLoadTotalEnergy'],
+                "v4": inverter_data['familyLoadPower'] * 1000,
                 # temperature (float, °C), not available by inverter data
                 # "v5": 0.0,
                 # voltage (float, V)
