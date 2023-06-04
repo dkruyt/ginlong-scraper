@@ -268,13 +268,19 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            }
 
             # Read inverter_detail into dict
-            changelist=["iPv1","iPv2","iPv3","iPv4","iPv5","iPv6","iPv7","iPv8","iPv9","iPv10",
-                        "iPv11","iPv12","iPv13","iPv14","iPv15","iPv16","iPv17","iPv18","iPv19","iPv20",
-                        "iPv21","iPv22","iPv23","iPv24","iPv25","iPv26","iPv27","iPv28","iPv29","iPv30",
+            changelist=["iPv1","iPv2","iPv3","iPv4","iPv5",
+                        "iPv6","iPv7","iPv8","iPv9","iPv10",
+                        "iPv11","iPv12","iPv13","iPv14","iPv15",
+                        "iPv16","iPv17","iPv18","iPv19","iPv20",
+                        "iPv21","iPv22","iPv23","iPv24","iPv25",
+                        "iPv26","iPv27","iPv28","iPv29","iPv30",
                         "iPv31","iPv32",
-                        "uPv1","uPv2","uPv3","uPv4","uPv5","uPv6","uPv7","uPv8","uPv9","uPv10",
-                        "uPv11", "uPv12", "uPv13","uPv14", "uPv15", "uPv16", "uPv17", "uPv18", "uPv19", "uPv20",
-                        "uPv21", "uPv22", "uPv23", "uPv24","uPv25", "uPv26", "uPv27", "uPv28", "uiPv29","uPv30",
+                        "uPv1","uPv2","uPv3","uPv4","uPv5",
+                        "uPv6","uPv7","uPv8","uPv9","uPv10",
+                        "uPv11", "uPv12", "uPv13","uPv14", "uPv15",
+                        "uPv16", "uPv17", "uPv18", "uPv19", "uPv20",
+                        "uPv21", "uPv22", "uPv23", "uPv24","uPv25",
+                        "uPv26", "uPv27", "uPv28", "uiPv29","uPv30",
                         "uPv31", "uPv32",
                         "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3"]
             dict_float = convert_dict_details_to_float(dict_detail,changelist)
