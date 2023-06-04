@@ -33,7 +33,6 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     device_id = int(os.environ['SOLIS_CLOUD_API_INVERTER_ID'])
     override_single_phase_inverter = os.environ['SOLIS_CLOUD_API_OVERRIDE_SINGLE_PHASE_INVERTER']
 
-
     # == Constants ===============================================================
     http_function = "POST"
     mime_content_type = "application/json"
@@ -217,6 +216,83 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             average_value = float((inverter_data[field_phase_1] + inverter_data[field_phase_2] + inverter_data[field_phase_3]) / 3)  # pylint: disable=line-too-long
         return average_value
 
+    def make_dict_detail_float(dict_to_change):
+        dict_to_change["iPv1"] = float(dict_to_change["iPv1"])
+        dict_to_change["iPv2"] = float(dict_to_change["iPv2"])
+        dict_to_change["iPv3"] = float(dict_to_change["iPv3"])
+        dict_to_change["iPv4"] = float(dict_to_change["iPv4"])
+        dict_to_change["iPv5"] = float(dict_to_change["iPv5"])
+        dict_to_change["iPv6"] = float(dict_to_change["iPv6"])
+        dict_to_change["iPv7"] = float(dict_to_change["iPv7"])
+        dict_to_change["iPv8"] = float(dict_to_change["iPv8"])
+        dict_to_change["iPv9"] = float(dict_to_change["iPv9"])
+        dict_to_change["iPv10"] = float(dict_to_change["iPv10"])
+        dict_to_change["iPv11"] = float(dict_to_change["iPv11"])
+        dict_to_change["iPv12"] = float(dict_to_change["iPv12"])
+        dict_to_change["iPv13"] = float(dict_to_change["iPv13"])
+        dict_to_change["iPv14"] = float(dict_to_change["iPv14"])
+        dict_to_change["iPv15"] = float(dict_to_change["iPv15"])
+        dict_to_change["iPv16"] = float(dict_to_change["iPv16"])
+        dict_to_change["iPv17"] = float(dict_to_change["iPv17"])
+        dict_to_change["iPv18"] = float(dict_to_change["iPv18"])
+        dict_to_change["iPv19"] = float(dict_to_change["iPv19"])
+        dict_to_change["iPv20"] = float(dict_to_change["iPv20"])
+        dict_to_change["iPv21"] = float(dict_to_change["iPv21"])
+        dict_to_change["iPv22"] = float(dict_to_change["iPv22"])
+        dict_to_change["iPv23"] = float(dict_to_change["iPv23"])
+        dict_to_change["iPv24"] = float(dict_to_change["iPv24"])
+        dict_to_change["iPv25"] = float(dict_to_change["iPv25"])
+        dict_to_change["iPv26"] = float(dict_to_change["iPv26"])
+        dict_to_change["iPv27"] = float(dict_to_change["iPv27"])
+        dict_to_change["iPv28"] = float(dict_to_change["iPv28"])
+        dict_to_change["iPv29"] = float(dict_to_change["iPv29"])
+        dict_to_change["iPv30"] = float(dict_to_change["iPv30"])
+        dict_to_change["iPv31"] = float(dict_to_change["iPv31"])
+        dict_to_change["iPv32"] = float(dict_to_change["iPv32"])
+
+        dict_to_change["uPv1"] = float(dict_to_change["uPv1"])
+        dict_to_change["uPv2"] = float(dict_to_change["uPv2"])
+        dict_to_change["uPv3"] = float(dict_to_change["uPv3"])
+        dict_to_change["uPv4"] = float(dict_to_change["uPv4"])
+        dict_to_change["uPv5"] = float(dict_to_change["uPv5"])
+        dict_to_change["uPv6"] = float(dict_to_change["uPv6"])
+        dict_to_change["uPv7"] = float(dict_to_change["uPv7"])
+        dict_to_change["uPv8"] = float(dict_to_change["uPv8"])
+        dict_to_change["uPv9"] = float(dict_to_change["uPv9"])
+        dict_to_change["uPv10"] = float(dict_to_change["uPv10"])
+        dict_to_change["uPv11"] = float(dict_to_change["uPv11"])
+        dict_to_change["uPv12"] = float(dict_to_change["uPv12"])
+        dict_to_change["uPv13"] = float(dict_to_change["uPv13"])
+        dict_to_change["uPv14"] = float(dict_to_change["uPv14"])
+        dict_to_change["uPv15"] = float(dict_to_change["uPv15"])
+        dict_to_change["uPv16"] = float(dict_to_change["uPv16"])
+        dict_to_change["uPv17"] = float(dict_to_change["uPv17"])
+        dict_to_change["uPv18"] = float(dict_to_change["uPv18"])
+        dict_to_change["uPv19"] = float(dict_to_change["uPv19"])
+        dict_to_change["uPv20"] = float(dict_to_change["uPv20"])
+        dict_to_change["uPv21"] = float(dict_to_change["uPv21"])
+        dict_to_change["uPv22"] = float(dict_to_change["uPv22"])
+        dict_to_change["uPv23"] = float(dict_to_change["uPv23"])
+        dict_to_change["uPv24"] = float(dict_to_change["uPv24"])
+        dict_to_change["uPv25"] = float(dict_to_change["uPv25"])
+        dict_to_change["uPv26"] = float(dict_to_change["uPv26"])
+        dict_to_change["uPv27"] = float(dict_to_change["uPv27"])
+        dict_to_change["uPv28"] = float(dict_to_change["uPv28"])
+        dict_to_change["uPv29"] = float(dict_to_change["uPv29"])
+        dict_to_change["uPv30"] = float(dict_to_change["uPv30"])
+        dict_to_change["uPv31"] = float(dict_to_change["uPv31"])
+        dict_to_change["uPv32"] = float(dict_to_change["uPv32"])
+
+        dict_to_change["iAc1"] = float(dict_to_change["iAc1"])
+        dict_to_change["iAc2"] = float(dict_to_change["iAc2"])
+        dict_to_change["iAc3"] = float(dict_to_change["iAc3"])
+
+        dict_to_change["uAc1"] = float(dict_to_change["uAc1"])
+        dict_to_change["uAc2"] = float(dict_to_change["uAc2"])
+        dict_to_change["uAc3"] = float(dict_to_change["uAc3"])
+
+        return dict_to_change
+
     # == MAIN ====================================================================
     # Write to Influxdb
     def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
@@ -263,7 +339,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            }
 
             # Read inverter_detail into dict
-            dict_fields.update(dict_detail)
+            dict_float = make_dict_detail_float(dict_detail)
+            dict_fields.update(dict_float)
 
             influx_to_submit = [
                 {
