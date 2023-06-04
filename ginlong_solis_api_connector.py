@@ -78,6 +78,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         """prettifies json for better output readability"""
         return json.dumps(json.loads(input_json), indent=2)
 
+    def calculate_unit_multiplicator(inverter_unit, expected_unit):
+        # do some magic
+        multiplicator = 1
+        return multiplicator  # e.g. 0.001 or 1000
+
     # == post ====================================================================
     def execute_request(target_url, data, headers) -> str:
         """execute request and handle errors"""
