@@ -78,10 +78,26 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         """prettifies json for better output readability"""
         return json.dumps(json.loads(input_json), indent=2)
 
-    def calculate_unit_multiplicator(inverter_unit, expected_unit):
-        # do some magic
-        multiplicator = 1
-        return multiplicator  # e.g. 0.001 or 1000
+    def calculate_unit_multiplicator(expected_unit, inverter_unit):
+        fb_inv=inverter_unit[1]
+        fb_exp=expected_unit[1]
+        multiplicator = calculate_factor(fb_inv) / calculate_factor(fb_exp)
+        return multiplicator
+
+    def calculate_factor(fb_factor):
+        if fb_factor == "k":
+            factor = 1000
+        elif fb_factor == "M":
+            factor = 1000000
+        elif fb_factor == "G":
+            factor = 1000000000
+        elif fb_factor == "T":
+            factor = 1000000000000
+        elif fb_factor == "m":
+            factor = 1/1000
+        else:
+            factor = 1
+        return factor
 
     # == post ====================================================================
     def execute_request(target_url, data, headers) -> str:
@@ -234,22 +250,22 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_year = inverter_year
             dict_all = inverter_all  # pylint: disable=unused-variable
 
-            dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1']),
-                           'DC_Voltage_PV2': float(dict_detail['uPv2']),
-                           'DC_Voltage_PV3': float(dict_detail['uPv3']),
-                           'DC_Voltage_PV4': float(dict_detail['uPv4']),
-                           'DC_Current1': float(dict_detail['iPv1']),
-                           'DC_Current2': float(dict_detail['iPv2']),
-                           'DC_Current3': float(dict_detail['iPv3']),
-                           'DC_Current4': float(dict_detail['iPv4']),
+            dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1'] * calculate_unit_multiplicator("V",dict_detail['uPv1Str'])),
+                           'DC_Voltage_PV2': float(dict_detail['uPv2'] * calculate_unit_multiplicator("V",dict_detail['uPv2Str'])),
+                           'DC_Voltage_PV3': float(dict_detail['uPv3'] * calculate_unit_multiplicator("V",dict_detail['uPv3Str'])),
+                           'DC_Voltage_PV4': float(dict_detail['uPv4'] * calculate_unit_multiplicator("V",dict_detail['uPv4Str'])),
+                           'DC_Current1': float(dict_detail['iPv1'] * calculate_unit_multiplicator("A",dict_detail['iPv1Str'])),
+                           'DC_Current2': float(dict_detail['iPv2'] * calculate_unit_multiplicator("A",dict_detail['iPv2Str'])),
+                           'DC_Current3': float(dict_detail['iPv3'] * calculate_unit_multiplicator("A",dict_detail['iPv3Str'])),
+                           'DC_Current4': float(dict_detail['iPv4'] * calculate_unit_multiplicator("A",dict_detail['iPv4Str'])),
                            'AC_Voltage': get_ac_voltage(dict_detail),
                            'AC_Current': get_ac_current(dict_detail),
-                           'AC_Power': float(dict_detail['pac'] * 1000),
+                           'AC_Power': float(dict_detail['pac'] * calculate_unit_multiplicator("W",dict_detail['pacStr'])),
                            'AC_Frequency': float(dict_detail['fac']),
-                           'DC_Power_PV1': float(dict_detail['pow1']),
-                           'DC_Power_PV2': float(dict_detail['pow2']),
-                           'DC_Power_PV3': float(dict_detail['pow3']),
-                           'DC_Power_PV4': float(dict_detail['pow4']),
+                           'DC_Power_PV1': float(dict_detail['pow1'] * calculate_unit_multiplicator("W",dict_detail['pow1Str'])),
+                           'DC_Power_PV2': float(dict_detail['pow2'] * calculate_unit_multiplicator("W",dict_detail['pow2Str'])),
+                           'DC_Power_PV3': float(dict_detail['pow3'] * calculate_unit_multiplicator("W",dict_detail['pow3Str'])),
+                           'DC_Power_PV4': float(dict_detail['pow4'] * calculate_unit_multiplicator("W",dict_detail['pow4Str'])),
                            'Inverter_Temperature': float(dict_detail['inverterTemperature']),
                            'Daily_Generation': float(dict_detail['eToday']),
                            'Monthly_Generation': float(dict_detail['eMonth']),
