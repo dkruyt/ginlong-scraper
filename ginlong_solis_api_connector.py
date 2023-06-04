@@ -216,82 +216,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             average_value = float((inverter_data[field_phase_1] + inverter_data[field_phase_2] + inverter_data[field_phase_3]) / 3)  # pylint: disable=line-too-long
         return average_value
 
-    def make_dict_detail_float(dict_to_change):
-        dict_to_change["iPv1"] = float(dict_to_change["iPv1"])
-        dict_to_change["iPv2"] = float(dict_to_change["iPv2"])
-        dict_to_change["iPv3"] = float(dict_to_change["iPv3"])
-        dict_to_change["iPv4"] = float(dict_to_change["iPv4"])
-        dict_to_change["iPv5"] = float(dict_to_change["iPv5"])
-        dict_to_change["iPv6"] = float(dict_to_change["iPv6"])
-        dict_to_change["iPv7"] = float(dict_to_change["iPv7"])
-        dict_to_change["iPv8"] = float(dict_to_change["iPv8"])
-        dict_to_change["iPv9"] = float(dict_to_change["iPv9"])
-        dict_to_change["iPv10"] = float(dict_to_change["iPv10"])
-        dict_to_change["iPv11"] = float(dict_to_change["iPv11"])
-        dict_to_change["iPv12"] = float(dict_to_change["iPv12"])
-        dict_to_change["iPv13"] = float(dict_to_change["iPv13"])
-        dict_to_change["iPv14"] = float(dict_to_change["iPv14"])
-        dict_to_change["iPv15"] = float(dict_to_change["iPv15"])
-        dict_to_change["iPv16"] = float(dict_to_change["iPv16"])
-        dict_to_change["iPv17"] = float(dict_to_change["iPv17"])
-        dict_to_change["iPv18"] = float(dict_to_change["iPv18"])
-        dict_to_change["iPv19"] = float(dict_to_change["iPv19"])
-        dict_to_change["iPv20"] = float(dict_to_change["iPv20"])
-        dict_to_change["iPv21"] = float(dict_to_change["iPv21"])
-        dict_to_change["iPv22"] = float(dict_to_change["iPv22"])
-        dict_to_change["iPv23"] = float(dict_to_change["iPv23"])
-        dict_to_change["iPv24"] = float(dict_to_change["iPv24"])
-        dict_to_change["iPv25"] = float(dict_to_change["iPv25"])
-        dict_to_change["iPv26"] = float(dict_to_change["iPv26"])
-        dict_to_change["iPv27"] = float(dict_to_change["iPv27"])
-        dict_to_change["iPv28"] = float(dict_to_change["iPv28"])
-        dict_to_change["iPv29"] = float(dict_to_change["iPv29"])
-        dict_to_change["iPv30"] = float(dict_to_change["iPv30"])
-        dict_to_change["iPv31"] = float(dict_to_change["iPv31"])
-        dict_to_change["iPv32"] = float(dict_to_change["iPv32"])
-
-        dict_to_change["uPv1"] = float(dict_to_change["uPv1"])
-        dict_to_change["uPv2"] = float(dict_to_change["uPv2"])
-        dict_to_change["uPv3"] = float(dict_to_change["uPv3"])
-        dict_to_change["uPv4"] = float(dict_to_change["uPv4"])
-        dict_to_change["uPv5"] = float(dict_to_change["uPv5"])
-        dict_to_change["uPv6"] = float(dict_to_change["uPv6"])
-        dict_to_change["uPv7"] = float(dict_to_change["uPv7"])
-        dict_to_change["uPv8"] = float(dict_to_change["uPv8"])
-        dict_to_change["uPv9"] = float(dict_to_change["uPv9"])
-        dict_to_change["uPv10"] = float(dict_to_change["uPv10"])
-        dict_to_change["uPv11"] = float(dict_to_change["uPv11"])
-        dict_to_change["uPv12"] = float(dict_to_change["uPv12"])
-        dict_to_change["uPv13"] = float(dict_to_change["uPv13"])
-        dict_to_change["uPv14"] = float(dict_to_change["uPv14"])
-        dict_to_change["uPv15"] = float(dict_to_change["uPv15"])
-        dict_to_change["uPv16"] = float(dict_to_change["uPv16"])
-        dict_to_change["uPv17"] = float(dict_to_change["uPv17"])
-        dict_to_change["uPv18"] = float(dict_to_change["uPv18"])
-        dict_to_change["uPv19"] = float(dict_to_change["uPv19"])
-        dict_to_change["uPv20"] = float(dict_to_change["uPv20"])
-        dict_to_change["uPv21"] = float(dict_to_change["uPv21"])
-        dict_to_change["uPv22"] = float(dict_to_change["uPv22"])
-        dict_to_change["uPv23"] = float(dict_to_change["uPv23"])
-        dict_to_change["uPv24"] = float(dict_to_change["uPv24"])
-        dict_to_change["uPv25"] = float(dict_to_change["uPv25"])
-        dict_to_change["uPv26"] = float(dict_to_change["uPv26"])
-        dict_to_change["uPv27"] = float(dict_to_change["uPv27"])
-        dict_to_change["uPv28"] = float(dict_to_change["uPv28"])
-        dict_to_change["uPv29"] = float(dict_to_change["uPv29"])
-        dict_to_change["uPv30"] = float(dict_to_change["uPv30"])
-        dict_to_change["uPv31"] = float(dict_to_change["uPv31"])
-        dict_to_change["uPv32"] = float(dict_to_change["uPv32"])
-
-        dict_to_change["iAc1"] = float(dict_to_change["iAc1"])
-        dict_to_change["iAc2"] = float(dict_to_change["iAc2"])
-        dict_to_change["iAc3"] = float(dict_to_change["iAc3"])
-
-        dict_to_change["uAc1"] = float(dict_to_change["uAc1"])
-        dict_to_change["uAc2"] = float(dict_to_change["uAc2"])
-        dict_to_change["uAc3"] = float(dict_to_change["uAc3"])
-
+    def convert_dict_details_to_float(dict_to_change, parameters):
+        for param in parameters:
+            dict_to_change[param] = float(dict_to_change[param])
         return dict_to_change
+
 
     # == MAIN ====================================================================
     # Write to Influxdb
@@ -339,7 +268,16 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            }
 
             # Read inverter_detail into dict
-            dict_float = make_dict_detail_float(dict_detail)
+            changelist=["iPv1","iPv2","iPv3","iPv4","iPv5","iPv6","iPv7","iPv8","iPv9","iPv10",
+                        "iPv11","iPv12","iPv13","iPv14","iPv15","iPv16","iPv17","iPv18","iPv19","iPv20",
+                        "iPv21","iPv22","iPv23","iPv24","iPv25","iPv26","iPv27","iPv28","iPv29","iPv30",
+                        "iPv31","iPv32",
+                        "uPv1","uPv2","uPv3","uPv4","uPv5","uPv6","uPv7","uPv8","uPv9","uPv10",
+                        "uPv11", "uPv12", "uPv13","uPv14", "uPv15", "uPv16", "uPv17", "uPv18", "uPv19", "uPv20",
+                        "uPv21", "uPv22", "uPv23", "uPv24","uPv25", "uPv26", "uPv27", "uPv28", "uiPv29","uPv30",
+                        "uPv31", "uPv32",
+                        "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3"]
+            dict_float = convert_dict_details_to_float(dict_detail,changelist)
             dict_fields.update(dict_float)
 
             influx_to_submit = [
