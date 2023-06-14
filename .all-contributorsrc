@@ -15,6 +15,17 @@
   "skipCi": true,
   "contributors": [
     {
+      "login": "TobiO79",
+      "name": "Tobias Otto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30373938?v=4",
+      "profile": "https://github.com/TobiO79",
+      "contributions": [
+        "test",
+        "code",
+        "maintenance"
+      ]
+    },
+    {
       "login": "Gentleman1983",
       "name": "Christian Otto",
       "avatar_url": "https://avatars.githubusercontent.com/u/1020222?v=4",
