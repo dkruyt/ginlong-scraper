@@ -1,3 +1,9 @@
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Gentleman1983/ginlong_solis_api_connector?sort=semver&style=plastic)
+![GitHub workflow (pylint)](https://img.shields.io/github/actions/workflow/status/Gentleman1983/ginlong_solis_api_connector/pylint.yml?label=pylint&style=plastic)
+![GitHub license](https://img.shields.io/github/license/Gentleman1983/ginlong_solis_api_connector?style=plastic)
+![All Contributors](https://img.shields.io/github/all-contributors/Gentleman1983/ginlong_solis_api_connector?style=plastic)
+![GitHub stars](https://img.shields.io/github/stars/Gentleman1983/ginlong_solis_api_connector?style=plastic)
+
 # ginlong-solis-api-connector
 
 Fetches API data from Solis Cloud API and outputs it to influxdb, pvoutput or mqtt. Based on [ginlong-scraper by dkruyt](https://github.com/dkruyt/ginlong-scraper).
@@ -61,3 +67,14 @@ this will list the IDs of each inverter.
 The grafana-dashboard-example.json file you could import in to Grafana if you use the influx database. Then you can make a dashboard similar to this.
 
 ![grafana](https://github.com/dkruyt/resources/raw/master/grafana-dashboard-ginlong-small.png)
+
+# Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
