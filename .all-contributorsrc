@@ -1,15 +1,29 @@
 {
   "_comment": "This JSON file controls the behaviour of the all contributors bot. A description of the keys can be found here: https://allcontributors.org/docs/en/bot/configuration",
   "projectName": "ginlong_solis_api_connector",
-  "projectOwner": "gentleman1983",
+  "projectOwner": "Gentleman1983",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": ["README.md"],
+  "files": [
+    "README.md"
+  ],
   "imageSize": 100,
   "commit": false,
   "contributorsPerLine": 7,
   "contributorsSortAlphabetically": false,
   "linkToUsage": true,
   "skipCi": true,
-  "contributors": []
+  "contributors": [
+    {
+      "login": "TobiO79",
+      "name": "Tobias Otto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30373938?v=4",
+      "profile": "https://github.com/TobiO79",
+      "contributions": [
+        "test"
+      ]
+    }
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
