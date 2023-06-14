@@ -1,6 +1,7 @@
 {
+  "_comment": "This JSON file controls the behaviour of the all contributors bot. A description of the keys can be found here: https://allcontributors.org/docs/en/bot/configuration",
   "projectName": "ginlong_solis_api_connector",
-  "projectOwner": "Gentleman1983",
+  "projectOwner": "gentleman1983",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": ["README.md"],
@@ -8,11 +9,6 @@
   "commit": false,
   "contributorsPerLine": 7,
   "contributorsSortAlphabetically": false,
-  "badgeTemplate": "[![All Contributors](https://img.shields.io/github/all-contributors/<%= projectOwner %>/<%= projectName %>?color=ee8449&style=flat-square)](#contributors)",
-  "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name %></b></sub></a>",
-  "wrapperTemplate": "\n<table>\n  <tbody><%= bodyContent %>  </tbody>\n<%= tableFooterContent %></table>\n\n",
-  "types": {
-  },
   "linkToUsage": true,
   "skipCi": true,
   "contributors": []
