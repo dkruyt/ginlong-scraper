@@ -37,6 +37,15 @@
         "maintenance",
         "review"
       ]
+    },
+    {
+      "login": "petermdevries",
+      "name": "Peter de Vries",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15040708?v=4",
+      "profile": "https://github.com/petermdevries",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "commitType": "docs",
