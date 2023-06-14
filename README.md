@@ -76,7 +76,7 @@ The grafana-dashboard-example.json file you could import in to Grafana if you us
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TobiO79"><img src="https://avatars.githubusercontent.com/u/30373938?v=4?s=100" width="100px;" alt="Tobias Otto"/><br /><sub><b>Tobias Otto</b></sub></a><br /><a href="https://github.com/Gentleman1983/ginlong_solis_api_connector/commits?author=TobiO79" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TobiO79"><img src="https://avatars.githubusercontent.com/u/30373938?v=4?s=100" width="100px;" alt="Tobias Otto"/><br /><sub><b>Tobias Otto</b></sub></a><br /><a href="https://github.com/Gentleman1983/ginlong_solis_api_connector/commits?author=TobiO79" title="Tests">⚠️</a> <a href="https://github.com/Gentleman1983/ginlong_solis_api_connector/commits?author=TobiO79" title="Code">💻</a> <a href="#maintenance-TobiO79" title="Maintenance">🚧</a></td>
     </tr>
   </tbody>
   <tfoot>
