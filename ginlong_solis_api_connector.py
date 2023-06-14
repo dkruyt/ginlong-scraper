@@ -221,6 +221,13 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_to_change[param] = float(dict_to_change[param])
         return dict_to_change
 
+    def get_last_month_generation(dict_year):
+        generation_last_month = 0.0
+        if len(dict_year) > 1:
+            generation_last_month = float(dict_year[-2]['energy'])
+
+        return generation_last_month
+
 
     # == MAIN ====================================================================
     # Write to Influxdb
@@ -255,7 +262,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'Monthly_Generation': float(dict_detail['eMonth']),
                            'Annual_Generation': float(dict_detail['eYear']),
                            'Total_Generation': float(dict_detail['eTotal'] * 1000),
-                           'Generation_Last_Month': float(dict_year[-2]['energy']),
+                           'Generation_Last_Month': get_last_month_generation(dict_year),
                            'Power_Grid_Total_Power': float(dict_detail['psum'] * 1000),
                            'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy'] * 1000),  # pylint: disable=line-too-long
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy'] * 1000),  # pylint: disable=line-too-long
