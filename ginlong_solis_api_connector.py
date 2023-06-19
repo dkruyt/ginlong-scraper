@@ -146,7 +146,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         body = '{"userid":"' + api_key_id + '"}'
         data_content = get_solis_cloud_data(endpoint_station_list, body)
         data_json = json.loads(data_content)["data"]["page"]["records"]
-        entries = len(data_json)
+        entries = len(data_json["data"]["page"]["records"])
         if device_id < 0:
             logging.error("'SOLIS_CLOUD_API_INVERTER_ID' has to be greater or equal to 0 " + \
                           "and lower than %s.", str(entries))
