@@ -55,6 +55,24 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "philicibine",
+      "name": "philicibine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16887758?v=4",
+      "profile": "https://github.com/philicibine",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "MetPhoto",
+      "name": "Mark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2766363?v=4",
+      "profile": "https://github.com/MetPhoto",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "commitType": "docs",
