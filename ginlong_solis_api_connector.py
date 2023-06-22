@@ -146,9 +146,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     # == get_inverter_list_body ==================================================
     def get_inverter_ids():
         body = '{"userid":"' + api_key_id + '"}'
-        data_content = get_solis_cloud_data(endpoint_station_list, body)
-        data_json = json.loads(data_content)["data"]["page"]["records"]
-        entries = len(data_json["data"]["page"]["records"])
+        data_content = get_solis_cloud_data(endpoint_inverter_list, body)
+        data_json = json.loads(data_content)["data"]["inverterStatusVo"]
+        entries = data_json["all"]-1
         if device_id < 0:
             logging.error("'SOLIS_CLOUD_API_INVERTER_ID' has to be greater or equal to 0 " + \
                           "and lower than %s.", str(entries))
@@ -157,6 +157,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                           ") is larger than or equal to the available number of inverters (" + \
                           "%s). Please select a value between '0' and '%s'.", str(device_id),
                           str(entries), str(entries - 1))
+        data_content = get_solis_cloud_data(endpoint_station_list, body)
+        data_json = json.loads(data_content)["data"]["page"]["records"]
         station_info = data_json[device_id]
         station_id = station_info["id"]
 
