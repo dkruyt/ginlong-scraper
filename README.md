@@ -56,6 +56,8 @@ and just vary the deviceId in the environment variables.
 | MQTT_SERVER                                    | No       | MQTT server                                                                                                                         | `localhost`                  |
 | MQTT_USERNAME                                  | No       | MQTT username                                                                                                                       | *empty*                      |
 | MQTT_PASSWORD                                  | No       | MQTT password                                                                                                                       | *empty*                      |
+| MQTT_PORT                                      | No       | MQTT port default 1883                                                                                                              | `1883`                       |
+| MQTT_TOPIC                                     | No       | MQTT topic root, fulltopic will by MQTT_Topic / MQTT_Client_ID                                                                      | `topic`                      |     
 | TZ                                             | No       | TimeZone e.g Australia/Sydney                                                                                                       | *empty*                      |
 
 Note that if you have more than 1 device - then it is not readily apparent where to get the Device ID

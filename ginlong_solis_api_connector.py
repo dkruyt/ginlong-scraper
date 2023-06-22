@@ -69,6 +69,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     mqtt = os.environ['USE_MQTT']
     mqtt_client = os.environ['MQTT_CLIENT_ID']
     mqtt_server = os.environ['MQTT_SERVER']
+    mqtt_topic_pfad = os.environ['MQTT_TOPIC']
+    mqtt_port = int(os.environ['MQTT_PORT'])
     mqtt_username = os.environ['MQTT_USERNAME']
     mqtt_password = os.environ['MQTT_PASSWORD']
 
@@ -395,8 +397,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
             msgs = []
 
-            # Create the topic base using the client_id and serial number
-            mqtt_topic = ''.join([mqtt_client, "/"])
+            # Topic base using the env mqtt_topic_pfad + client ID
+            mqtt_topic = ''.join([mqtt_topic_pfad, "/", mqtt_client, "/"])
 
             if mqtt_username != "" and mqtt_password != "":
                 auth_settings = {'username': mqtt_username, 'password': mqtt_password}
@@ -408,7 +410,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 msgs.append((mqtt_topic + key, value, 0, False))
 
             logging.debug("writing to MQTT -> %s", msgs)
-            publish.multiple(msgs, hostname=mqtt_server, auth=auth_settings)
+            publish.multiple(msgs, hostname=mqtt_server, port=mqtt_port, client_id=mqtt_client, auth=auth_settings)
 
     if api_key_id == "" or api_key_pw == "":
         logging.error('Key ID and secret are mandatory for Solis Cloud API')
