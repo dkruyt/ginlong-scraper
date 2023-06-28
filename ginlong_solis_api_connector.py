@@ -83,9 +83,6 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.dumps(json.loads(input_json), indent=2)
 
     # == post ====================================================================
-    def execute_request(target_url, data, headers) -> str:
-        return execute_request(target_url, data, headers, api_retries)
-
     def execute_request(target_url, data, headers, retries) -> str:
         """execute request and handle errors"""
         if data != "":
@@ -148,7 +145,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 "Date": now,
                 "Authorization": authorization,
             }
-            data_content = execute_request(url + url_part, data, headers)
+            data_content = execute_request(url + url_part, data, headers, api_retries)
             logging.debug(url + url_part + " -> " + prettify_json(data_content))
             if data_content != "ERROR":
                 return data_content
