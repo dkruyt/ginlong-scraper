@@ -2,7 +2,9 @@
 This document provides an overview to the changes on the different releases...
 
 ## NEXT
-* Added `CHANGELOG.md` document to have central document for changes. ([#38](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/38)) 
+* Added `CHANGELOG.md` document to have central document for changes. ([#38](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/38))
+* Fixed issue regarding bad gateways. ([#46](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/46))
+  * Added option to configure number and timeout between retries. 
 
 ## 2.3.1
 * Fixed issue on error handling on the `SOLIS_CLOUD_API_INVERTER_ID` parameter. ([#24](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/24))

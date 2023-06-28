@@ -32,6 +32,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     url = f'{domain}:{port}'
     device_id = int(os.environ['SOLIS_CLOUD_API_INVERTER_ID'])
     override_single_phase_inverter = os.environ['SOLIS_CLOUD_API_OVERRIDE_SINGLE_PHASE_INVERTER']
+    api_retries = int(os.environ['SOLIS_CLOUD_API_NUMBER_RETRIES'])
+    api_retries_timeout_s = int(os.environ['SOLIS_CLOUD_API_RETRIES_WAIT_S'])
 
     # == Constants ===============================================================
     http_function = "POST"
@@ -82,6 +84,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
     # == post ====================================================================
     def execute_request(target_url, data, headers) -> str:
+        return execute_request(target_url, data, headers, api_retries)
+
+    def execute_request(target_url, data, headers, retries) -> str:
         """execute request and handle errors"""
         if data != "":
             post_data = data.encode("utf-8")
@@ -96,6 +101,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return body_content
         except HTTPError as error:
             error_string = str(error.status) + ": " + error.reason
+
+            if retries > 0:
+                logging.warning(target_url + " -> " + error_string + " | retries left: " + retries )
+                time.sleep(api_retries_timeout_s)
+                execute_request(target_url, data, headers, retries - 1)
         except URLError as error:
             error_string = str(error.reason)
         except TimeoutError:
