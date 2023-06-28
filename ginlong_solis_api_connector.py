@@ -419,7 +419,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 msgs.append((mqtt_topic + key, value, 0, False))
 
             logging.debug("writing to MQTT -> %s", msgs)
-            publish.multiple(msgs, hostname=mqtt_server, port=mqtt_port, client_id=mqtt_client, auth=auth_settings)
+            publish.multiple(msgs, hostname=mqtt_server, port=mqtt_port, client_id=mqtt_client, auth=auth_settings)  # pylint: disable=line-too-long
 
     if api_key_id == "" or api_key_pw == "":
         logging.error('Key ID and secret are mandatory for Solis Cloud API')
