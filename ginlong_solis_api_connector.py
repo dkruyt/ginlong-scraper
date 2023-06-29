@@ -32,6 +32,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     url = f'{domain}:{port}'
     device_id = int(os.environ['SOLIS_CLOUD_API_INVERTER_ID'])
     override_single_phase_inverter = os.environ['SOLIS_CLOUD_API_OVERRIDE_SINGLE_PHASE_INVERTER']
+    api_retries = int(os.environ['SOLIS_CLOUD_API_NUMBER_RETRIES'])
+    api_retries_timeout_s = int(os.environ['SOLIS_CLOUD_API_RETRIES_WAIT_S'])
 
     # == Constants ===============================================================
     http_function = "POST"
@@ -81,7 +83,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.dumps(json.loads(input_json), indent=2)
 
     # == post ====================================================================
-    def execute_request(target_url, data, headers) -> str:
+    def execute_request(target_url, data, headers, retries) -> str:
         """execute request and handle errors"""
         if data != "":
             post_data = data.encode("utf-8")
@@ -96,6 +98,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return body_content
         except HTTPError as error:
             error_string = str(error.status) + ": " + error.reason
+
+            if retries > 0:
+                logging.warning(target_url + " -> " + error_string + " | retries left: " + retries )
+                time.sleep(api_retries_timeout_s)
+                execute_request(target_url, data, headers, retries - 1)
         except URLError as error:
             error_string = str(error.reason)
         except TimeoutError:
@@ -138,7 +145,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 "Date": now,
                 "Authorization": authorization,
             }
-            data_content = execute_request(url + url_part, data, headers)
+            data_content = execute_request(url + url_part, data, headers, api_retries)
             logging.debug(url + url_part + " -> " + prettify_json(data_content))
             if data_content != "ERROR":
                 return data_content
@@ -412,7 +419,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 msgs.append((mqtt_topic + key, value, 0, False))
 
             logging.debug("writing to MQTT -> %s", msgs)
-            publish.multiple(msgs, hostname=mqtt_server, port=mqtt_port, client_id=mqtt_client, auth=auth_settings)
+            publish.multiple(msgs, hostname=mqtt_server, port=mqtt_port, client_id=mqtt_client, auth=auth_settings)  # pylint: disable=line-too-long
 
     if api_key_id == "" or api_key_pw == "":
         logging.error('Key ID and secret are mandatory for Solis Cloud API')
