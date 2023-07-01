@@ -159,7 +159,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         if device_id < 0:
             logging.error("'SOLIS_CLOUD_API_INVERTER_ID' has to be greater or equal to 0 " + \
                           "and lower than %s.", str(entries))
-        if device_id >= entries:
+        if device_id > entries:
             logging.error("Your 'SOLIS_CLOUD_API_INVERTER_ID' (%s" + \
                           ") is larger than or equal to the available number of inverters (" + \
                           "%s). Please select a value between '0' and '%s'.", str(device_id),
