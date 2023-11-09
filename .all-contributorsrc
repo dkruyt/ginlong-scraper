@@ -82,7 +82,8 @@
       "contributions": [
         "infra",
         "test",
-        "code"
+        "code",
+        "bug"
       ]
     }
   ],
