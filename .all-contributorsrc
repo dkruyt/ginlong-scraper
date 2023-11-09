@@ -73,6 +73,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "Stephen2615",
+      "name": "Stephen2615",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43490186?v=4",
+      "profile": "https://github.com/Stephen2615",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "commitType": "docs",
