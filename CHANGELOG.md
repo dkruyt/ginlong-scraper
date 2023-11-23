@@ -3,6 +3,7 @@ This document provides an overview to the changes on the different releases...
 
 ## NEXT
 * Added publishing to Dockerhub repository [gentleman1983/ginlong-solis-api-connector](https://hub.docker.com/repository/docker/gentleman1983/ginlong-solis-api-connector) on release ([#55](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/55))
+* Publishing task to Dockerhub should publish SBOM, too ([#57](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/57))
 
 ## 2.4.0
 * Added `CHANGELOG.md` document to have central document for changes. ([#38](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/38))
