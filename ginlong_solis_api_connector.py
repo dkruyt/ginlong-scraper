@@ -310,7 +310,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                         "uPv21", "uPv22", "uPv23", "uPv24","uPv25",
                         "uPv26", "uPv27", "uPv28", "uPv29","uPv30",
                         "uPv31", "uPv32",
-                        "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3"]
+                        "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3",
+                        "pA","pB","pC"]
             dict_float = convert_dict_details_to_float(dict_detail,changelist)
             dict_fields.update(dict_float)
 
