@@ -1,6 +1,6 @@
 name: Build and publish a Docker image
 
-on: [release]
+on: [ release ]
 
 env:
   IMAGE_NAME: gentleman1983/ginlong-solis-api-connector
