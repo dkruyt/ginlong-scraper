@@ -8,7 +8,7 @@
 
 Fetches API data from Solis Cloud API and outputs it to influxdb, pvoutput or mqtt. Based on [ginlong-scraper by dkruyt](https://github.com/dkruyt/ginlong-scraper).
 
-https://hub.docker.com/repository/docker/dkruyt/ginlong-scraper
+https://hub.docker.com/repository/docker/gentleman1983/ginlong-solis-api-connector
 
 There is a possibility it also works with the following inverters: Omnik Solar, Solarman and Trannergy Inverters
 
