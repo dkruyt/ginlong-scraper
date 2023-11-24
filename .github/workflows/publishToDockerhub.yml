@@ -38,3 +38,4 @@ jobs:
           provenance: mode=max
           tags: |
             gentleman1983/ginlong-solis-api-connector:${{ github.event.release.name }}
+            gentleman1983/ginlong-solis-api-connector:latest
