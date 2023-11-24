@@ -5,6 +5,7 @@ This document provides an overview to the changes on the different releases...
 * Updated the Dockerhub repository on `README.md`, to not point to the [old dkruyt API scraper images](https://hub.docker.com/repository/docker/dkruyt/ginlong-scraper) ([#51](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/51))
 * Added publishing to Dockerhub repository [gentleman1983/ginlong-solis-api-connector](https://hub.docker.com/repository/docker/gentleman1983/ginlong-solis-api-connector) on release ([#55](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/55))
 * Publishing task to Dockerhub should publish [SBOM](https://www.cisa.gov/sbom), too ([#57](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/57))
+* Add Mend renovate bot to repository ([#56](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/56))
 
 ## 2.4.0
 * Added `CHANGELOG.md` document to have central document for changes. ([#38](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/38))
