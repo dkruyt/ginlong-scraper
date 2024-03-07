@@ -6,6 +6,7 @@ This document provides an overview to the changes on the different releases...
 * Added publishing to Dockerhub repository [gentleman1983/ginlong-solis-api-connector](https://hub.docker.com/repository/docker/gentleman1983/ginlong-solis-api-connector) on release ([#55](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/55))
 * Publishing task to Dockerhub should publish [SBOM](https://www.cisa.gov/sbom), too ([#57](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/57))
 * Add Mend renovate bot to repository ([#56](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/56))
+* Fixed parsing issues regarding api update from March 4th, 2024. ([#68](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/68))
 
 ## 2.4.0
 * Added `CHANGELOG.md` document to have central document for changes. ([#38](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/38))

@@ -242,6 +242,14 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_to_change[param] = float(dict_to_change[param])
         return dict_to_change
 
+    def convert_dict_details_to_boolean(dict_to_change, parameters):
+        for param in parameters:
+            if dict_to_change[param]:
+                dict_to_change[param] = 1
+            else:
+                dict_to_change[param] = 0
+        return dict_to_change
+
     def get_last_month_generation(dict_year):
         generation_last_month = 0.0
         if len(dict_year) > 1:
@@ -295,8 +303,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
-            # Read inverter_detail into dict
-            changelist=["iPv1","iPv2","iPv3","iPv4","iPv5",
+            # Convert float values
+            changelist_float=["iPv1","iPv2","iPv3","iPv4","iPv5",
                         "iPv6","iPv7","iPv8","iPv9","iPv10",
                         "iPv11","iPv12","iPv13","iPv14","iPv15",
                         "iPv16","iPv17","iPv18","iPv19","iPv20",
@@ -312,9 +320,36 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                         "uPv31", "uPv32",
                         "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3",
                         "pA","pB","pC"]
-            dict_float = convert_dict_details_to_float(dict_detail,changelist)
+            dict_float = convert_dict_details_to_float(dict_detail,changelist_float)
             dict_fields.update(dict_float)
 
+            # Convert boolean values
+            changelist_boolean=["isShow"]
+            dict_boolean = convert_dict_details_to_boolean(dict_detail,changelist_boolean)
+            dict_fields.update(dict_boolean)
+
+            #remove empty battery list
+            if dict_fields["batteryList"].__len__() == 0:
+                dict_fields.pop("batteryList")
+
+            # List of elements to be changed on influx to float
+            dict_fields.pop("batteryChargeEnergy")
+            dict_fields.pop("batteryDischargeEnergy")
+            dict_fields.pop("batteryMonthChargeEnergy")
+            dict_fields.pop("batteryMonthDischargeEnergy")
+            dict_fields.pop("batteryYearChargeEnergy")
+            dict_fields.pop("batteryYearDischargeEnergy")
+            dict_fields.pop("familyLoadPercent")
+            dict_fields.pop("gridPurchasedEnergy")
+            dict_fields.pop("gridPurchasedMonthEnergy")
+            dict_fields.pop("gridPurchasedYearEnergy")
+            dict_fields.pop("gridSellEnergy")
+            dict_fields.pop("gridSellMonthEnergy")
+            dict_fields.pop("gridSellYearEnergy")
+            dict_fields.pop("homeLoadEnergy")
+            dict_fields.pop("totalLoadPower")
+
+            # Read inverter_detail into dict
             influx_to_submit = [
                 {
                     "measurement": influx_measurement,
