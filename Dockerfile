@@ -6,13 +6,13 @@ ARG VCS_REF
 
 LABEL maintainer="Gentleman1983, TobiO79" \
   org.opencontainers.image.created=$BUILD_DATE \
-  org.opencontainers.image.url="https://github.com/Gentleman1983/ginlong_solis_api_connector" \
+  org.opencontainers.image.url="https://hub.docker.com/repository/docker/gentleman1983/ginlong-solis-api-connector" \
   org.opencontainers.image.source="https://github.com/Gentleman1983/ginlong_solis_api_connector" \
   org.opencontainers.image.version=$VERSION \
   org.opencontainers.image.revision=$VCS_REF \
   org.opencontainers.image.vendor="Gentleman1983" \
   org.opencontainers.image.title="ginlong-solis-api-connector" \
-  org.opencontainers.image.description="Fetches API data from Solis Cloud API and outputs it to influxdb, pvoutput or mqtt" \
+  org.opencontainers.image.description="Fetches API data from Solis Cloud API and outputs it to influxdb, pvoutput or mqtt." \
   org.opencontainers.image.licenses="GPL-3.0"
 
 ENV LOG_LEVEL="INFO"
