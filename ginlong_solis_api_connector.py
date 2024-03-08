@@ -310,12 +310,12 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             ignore_change_to_float = ["updateDate"]
             for key in ignore_change_to_float:
                 changelist_float.remove(key)
-            dict_float = convert_dict_details_to_float(dict_detail,changelist_float)
+            dict_float = convert_dict_details_to_float(dict_detail, changelist_float)
             dict_fields.update(dict_float)
 
             # Convert boolean values
-            changelist_boolean=["isShow"]
-            dict_boolean = convert_dict_details_to_boolean(dict_detail,changelist_boolean)
+            changelist_boolean = ["isShow"]
+            dict_boolean = convert_dict_details_to_boolean(dict_detail, changelist_boolean)
             dict_fields.update(dict_boolean)
 
             # remove empty battery list
