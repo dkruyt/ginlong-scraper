@@ -318,7 +318,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_boolean = convert_dict_details_to_boolean(dict_detail,changelist_boolean)
             dict_fields.update(dict_boolean)
 
-            #remove empty battery list
+            # remove empty battery list
             if dict_fields["batteryList"].len() == 0:
                 dict_fields.pop("batteryList")
 
