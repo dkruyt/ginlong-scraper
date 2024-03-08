@@ -309,7 +309,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                     changelist_float.append(key)
             ignore_change_to_float = ["updateDate"]
             for key in ignore_change_to_float:
-                changelist_float.pop(key)
+                changelist_float.remove(key)
             dict_float = convert_dict_details_to_float(dict_detail,changelist_float)
             dict_fields.update(dict_float)
 
