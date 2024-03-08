@@ -257,10 +257,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
         return generation_last_month
 
-
     # == MAIN ====================================================================
     # Write to Influxdb
-    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
+    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date): # pylint: disable=too-many-locals
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
@@ -304,22 +303,16 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            }
 
             # Convert float values
-            changelist_float=["iPv1","iPv2","iPv3","iPv4","iPv5",
-                        "iPv6","iPv7","iPv8","iPv9","iPv10",
-                        "iPv11","iPv12","iPv13","iPv14","iPv15",
-                        "iPv16","iPv17","iPv18","iPv19","iPv20",
-                        "iPv21","iPv22","iPv23","iPv24","iPv25",
-                        "iPv26","iPv27","iPv28","iPv29","iPv30",
-                        "iPv31","iPv32",
-                        "uPv1","uPv2","uPv3","uPv4","uPv5",
-                        "uPv6","uPv7","uPv8","uPv9","uPv10",
-                        "uPv11", "uPv12", "uPv13","uPv14", "uPv15",
-                        "uPv16", "uPv17", "uPv18", "uPv19", "uPv20",
-                        "uPv21", "uPv22", "uPv23", "uPv24","uPv25",
-                        "uPv26", "uPv27", "uPv28", "uPv29","uPv30",
-                        "uPv31", "uPv32",
-                        "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3",
-                        "pA","pB","pC"]
+            changelist_float=[]
+            # old values "iPv1","iPv2","iPv3","iPv4","iPv5", "iPv6","iPv7","iPv8","iPv9","iPv10", "iPv11","iPv12",
+            # "iPv13","iPv14","iPv15", "iPv16","iPv17","iPv18","iPv19","iPv20", "iPv21","iPv22","iPv23","iPv24","iPv25",
+            # "iPv26","iPv27","iPv28","iPv29","iPv30", "iPv31","iPv32", "uPv1","uPv2","uPv3","uPv4","uPv5", "uPv6",
+            # "uPv7","uPv8","uPv9","uPv10", "uPv11", "uPv12", "uPv13","uPv14", "uPv15", "uPv16", "uPv17", "uPv18",
+            # "uPv19", "uPv20", "uPv21", "uPv22", "uPv23", "uPv24","uPv25", "uPv26", "uPv27", "uPv28", "uPv29","uPv30",
+            # "uPv31", "uPv32", "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3", "pA","pB","pC"]
+            for key, value in dict_fields.items():
+                if isinstance(value, int):
+                    changelist_float.append(key)
             dict_float = convert_dict_details_to_float(dict_detail,changelist_float)
             dict_fields.update(dict_float)
 
@@ -329,7 +322,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_fields.update(dict_boolean)
 
             #remove empty battery list
-            if dict_fields["batteryList"].__len__() == 0:
+            if dict_fields["batteryList"].len() == 0:
                 dict_fields.pop("batteryList")
 
             # List of elements to be changed on influx to float
