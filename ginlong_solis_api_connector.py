@@ -322,23 +322,6 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             if dict_fields["batteryList"].len() == 0:
                 dict_fields.pop("batteryList")
 
-            # List of elements to be changed on influx to float
-            dict_fields.pop("batteryChargeEnergy")
-            dict_fields.pop("batteryDischargeEnergy")
-            dict_fields.pop("batteryMonthChargeEnergy")
-            dict_fields.pop("batteryMonthDischargeEnergy")
-            dict_fields.pop("batteryYearChargeEnergy")
-            dict_fields.pop("batteryYearDischargeEnergy")
-            dict_fields.pop("familyLoadPercent")
-            dict_fields.pop("gridPurchasedEnergy")
-            dict_fields.pop("gridPurchasedMonthEnergy")
-            dict_fields.pop("gridPurchasedYearEnergy")
-            dict_fields.pop("gridSellEnergy")
-            dict_fields.pop("gridSellMonthEnergy")
-            dict_fields.pop("gridSellYearEnergy")
-            dict_fields.pop("homeLoadEnergy")
-            dict_fields.pop("totalLoadPower")
-
             # Read inverter_detail into dict
             influx_to_submit = [
                 {
