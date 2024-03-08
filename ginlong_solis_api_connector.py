@@ -319,7 +319,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_fields.update(dict_boolean)
 
             # remove empty battery list
-            if dict_fields["batteryList"].len() == 0:
+            if len(dict_fields["batteryList"]) == 0:
                 dict_fields.pop("batteryList")
 
             # Read inverter_detail into dict
