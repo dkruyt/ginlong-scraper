@@ -425,6 +425,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             else:
                 auth_settings = None
 
+            inverter_data.pop("batteryList")
+
             msgs.append((mqtt_topic + "updateDate", int(update_date), 0, False))
             for key, value in inverter_data.items():
                 msgs.append((mqtt_topic + key, value, 0, False))
