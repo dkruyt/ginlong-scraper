@@ -31,7 +31,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     port = int(os.environ['SOLIS_CLOUD_API_PORT'])
     url = f'{domain}:{port}'
     device_id = int(os.environ['SOLIS_CLOUD_API_INVERTER_ID'])
-
+    override_single_phase_inverter = os.environ['SOLIS_CLOUD_API_OVERRIDE_SINGLE_PHASE_INVERTER']
+    api_retries = int(os.environ['SOLIS_CLOUD_API_NUMBER_RETRIES'])
+    api_retries_timeout_s = int(os.environ['SOLIS_CLOUD_API_RETRIES_WAIT_S'])
 
     # == Constants ===============================================================
     http_function = "POST"
@@ -69,6 +71,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     mqtt = os.environ['USE_MQTT']
     mqtt_client = os.environ['MQTT_CLIENT_ID']
     mqtt_server = os.environ['MQTT_SERVER']
+    mqtt_topic_pfad = os.environ['MQTT_TOPIC']
+    mqtt_port = int(os.environ['MQTT_PORT'])
     mqtt_username = os.environ['MQTT_USERNAME']
     mqtt_password = os.environ['MQTT_PASSWORD']
 
@@ -100,7 +104,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return factor
 
     # == post ====================================================================
-    def execute_request(target_url, data, headers) -> str:
+    def execute_request(target_url, data, headers, retries) -> str:
         """execute request and handle errors"""
         if data != "":
             post_data = data.encode("utf-8")
@@ -115,6 +119,11 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 return body_content
         except HTTPError as error:
             error_string = str(error.status) + ": " + error.reason
+
+            if retries > 0:
+                logging.warning(target_url + " -> " + error_string + " | retries left: " + retries )
+                time.sleep(api_retries_timeout_s)
+                execute_request(target_url, data, headers, retries - 1)
         except URLError as error:
             error_string = str(error.reason)
         except TimeoutError:
@@ -157,7 +166,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 "Date": now,
                 "Authorization": authorization,
             }
-            data_content = execute_request(url + url_part, data, headers)
+            data_content = execute_request(url + url_part, data, headers, api_retries)
             logging.debug(url + url_part + " -> " + prettify_json(data_content))
             if data_content != "ERROR":
                 return data_content
@@ -165,8 +174,20 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
     # == get_inverter_list_body ==================================================
     def get_inverter_ids():
         body = '{"userid":"' + api_key_id + '"}'
+        data_content = get_solis_cloud_data(endpoint_inverter_list, body)
+        data_json = json.loads(data_content)["data"]["inverterStatusVo"]
+        entries = data_json["all"]-1
+        if device_id < 0:
+            logging.error("'SOLIS_CLOUD_API_INVERTER_ID' has to be greater or equal to 0 " + \
+                          "and lower than %s.", str(entries))
+        if device_id > entries:
+            logging.error("Your 'SOLIS_CLOUD_API_INVERTER_ID' (%s" + \
+                          ") is larger than or equal to the available number of inverters (" + \
+                          "%s). Please select a value between '0' and '%s'.", str(device_id),
+                          str(entries), str(entries - 1))
         data_content = get_solis_cloud_data(endpoint_station_list, body)
-        station_info = json.loads(data_content)["data"]["page"]["records"][0]
+        data_json = json.loads(data_content)["data"]["page"]["records"]
+        station_info = data_json[device_id]
         station_id = station_info["id"]
 
         body = '{"stationId":"' + station_id + '"}'
@@ -225,22 +246,41 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.loads(content)["data"]
 
     def get_ac_voltage(inverter_data):
-        if int(inverter_data['acOutputType']) == 0:  # single phase inverter
-            ac_voltage = float(inverter_data['uAc1'])
-        else:
-            ac_voltage = float((inverter_data['uAc1'] + inverter_data['uAc2'] + inverter_data['uAc3']) / 3)  # pylint: disable=line-too-long
-        return ac_voltage
+        return get_average_value(inverter_data, 'uAc1', 'uAc2', 'uAc3')
 
     def get_ac_current(inverter_data):
-        if int(inverter_data['acOutputType']) == 0:  # single phase inverter
-            ac_current = float(inverter_data['iAc1'])
+        return get_average_value(inverter_data, 'iAc1', 'iAc2', 'iAc3')
+
+    def get_average_value(inverter_data, field_phase_1, field_phase_2, field_phase_3):
+        if int(inverter_data['acOutputType']) == 0 or override_single_phase_inverter == 'true':
+            average_value = float(inverter_data[field_phase_1])
         else:
-            ac_current = float((inverter_data['iAc1'] + inverter_data['iAc2'] + inverter_data['iAc3']) / 3)  # pylint: disable=line-too-long
-        return ac_current
+            average_value = float((inverter_data[field_phase_1] + inverter_data[field_phase_2] + inverter_data[field_phase_3]) / 3)  # pylint: disable=line-too-long
+        return average_value
+
+    def convert_dict_details_to_float(dict_to_change, parameters):
+        for param in parameters:
+            dict_to_change[param] = float(dict_to_change[param])
+        return dict_to_change
+
+    def convert_dict_details_to_boolean(dict_to_change, parameters):
+        for param in parameters:
+            if dict_to_change[param]:
+                dict_to_change[param] = 1
+            else:
+                dict_to_change[param] = 0
+        return dict_to_change
+
+    def get_last_month_generation(dict_year):
+        generation_last_month = 0.0
+        if len(dict_year) > 1:
+            generation_last_month = float(dict_year[-2]['energy'])
+
+        return generation_last_month
 
     # == MAIN ====================================================================
     # Write to Influxdb
-    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
+    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date): # pylint: disable=too-many-locals
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
@@ -250,42 +290,62 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_year = inverter_year
             dict_all = inverter_all  # pylint: disable=unused-variable
 
-            dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1'] * calculate_unit_multiplicator("V",dict_detail['uPv1Str'])),
-                           'DC_Voltage_PV2': float(dict_detail['uPv2'] * calculate_unit_multiplicator("V",dict_detail['uPv2Str'])),
-                           'DC_Voltage_PV3': float(dict_detail['uPv3'] * calculate_unit_multiplicator("V",dict_detail['uPv3Str'])),
-                           'DC_Voltage_PV4': float(dict_detail['uPv4'] * calculate_unit_multiplicator("V",dict_detail['uPv4Str'])),
-                           'DC_Current1': float(dict_detail['iPv1'] * calculate_unit_multiplicator("A",dict_detail['iPv1Str'])),
-                           'DC_Current2': float(dict_detail['iPv2'] * calculate_unit_multiplicator("A",dict_detail['iPv2Str'])),
-                           'DC_Current3': float(dict_detail['iPv3'] * calculate_unit_multiplicator("A",dict_detail['iPv3Str'])),
-                           'DC_Current4': float(dict_detail['iPv4'] * calculate_unit_multiplicator("A",dict_detail['iPv4Str'])),
+            dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1'] * calculate_unit_multiplicator("V",dict_detail['uPv1Str'])),  # pylint: disable=line-too-long
+                           'DC_Voltage_PV2': float(dict_detail['uPv2'] * calculate_unit_multiplicator("V",dict_detail['uPv2Str'])),  # pylint: disable=line-too-long  # pylint: disable=line-too-long
+                           'DC_Voltage_PV3': float(dict_detail['uPv3'] * calculate_unit_multiplicator("V",dict_detail['uPv3Str'])),  # pylint: disable=line-too-long
+                           'DC_Voltage_PV4': float(dict_detail['uPv4'] * calculate_unit_multiplicator("V",dict_detail['uPv4Str'])),  # pylint: disable=line-too-long
+                           'DC_Current1': float(dict_detail['iPv1'] * calculate_unit_multiplicator("A",dict_detail['iPv1Str'])),  # pylint: disable=line-too-long
+                           'DC_Current2': float(dict_detail['iPv2'] * calculate_unit_multiplicator("A",dict_detail['iPv2Str'])),  # pylint: disable=line-too-long
+                           'DC_Current3': float(dict_detail['iPv3'] * calculate_unit_multiplicator("A",dict_detail['iPv3Str'])),  # pylint: disable=line-too-long
+                           'DC_Current4': float(dict_detail['iPv4'] * calculate_unit_multiplicator("A",dict_detail['iPv4Str'])),  # pylint: disable=line-too-long
                            'AC_Voltage': get_ac_voltage(dict_detail),
                            'AC_Current': get_ac_current(dict_detail),
-                           'AC_Power': float(dict_detail['pac'] * calculate_unit_multiplicator("W",dict_detail['pacStr'])),
+                           'AC_Power': float(dict_detail['pac'] * calculate_unit_multiplicator("W",dict_detail['pacStr'])),  # pylint: disable=line-too-long
                            'AC_Frequency': float(dict_detail['fac']),
-                           'DC_Power_PV1': float(dict_detail['pow1'] * calculate_unit_multiplicator("W",dict_detail['pow1Str'])),
-                           'DC_Power_PV2': float(dict_detail['pow2'] * calculate_unit_multiplicator("W",dict_detail['pow2Str'])),
-                           'DC_Power_PV3': float(dict_detail['pow3'] * calculate_unit_multiplicator("W",dict_detail['pow3Str'])),
-                           'DC_Power_PV4': float(dict_detail['pow4'] * calculate_unit_multiplicator("W",dict_detail['pow4Str'])),
+                           'DC_Power_PV1': float(dict_detail['pow1'] * calculate_unit_multiplicator("W",dict_detail['pow1Str'])),  # pylint: disable=line-too-long
+                           'DC_Power_PV2': float(dict_detail['pow2'] * calculate_unit_multiplicator("W",dict_detail['pow2Str'])),  # pylint: disable=line-too-long
+                           'DC_Power_PV3': float(dict_detail['pow3'] * calculate_unit_multiplicator("W",dict_detail['pow3Str'])),  # pylint: disable=line-too-long
+                           'DC_Power_PV4': float(dict_detail['pow4'] * calculate_unit_multiplicator("W",dict_detail['pow4Str'])),  # pylint: disable=line-too-long
                            'Inverter_Temperature': float(dict_detail['inverterTemperature']),
-                           'Daily_Generation': float(dict_detail['eToday'] * calculate_unit_multiplicator("kWh",dict_detail['eTodayStr'])),
-                           'Monthly_Generation': float(dict_detail['eMonth'] * calculate_unit_multiplicator("kWh",dict_detail['eMonthStr'])),
-                           'Annual_Generation': float(dict_detail['eYear'] * calculate_unit_multiplicator("kWh",dict_detail['eYearStr'])),
-                           'Total_Generation': float(dict_detail['eTotal'] * calculate_unit_multiplicator("kWh",dict_detail['eTotalStr'])),
+                           'Daily_Generation': float(dict_detail['eToday'] * calculate_unit_multiplicator("kWh",dict_detail['eTodayStr'])),  # pylint: disable=line-too-long
+                           'Monthly_Generation': float(dict_detail['eMonth'] * calculate_unit_multiplicator("kWh",dict_detail['eMonthStr'])),  # pylint: disable=line-too-long
+                           'Annual_Generation': float(dict_detail['eYear'] * calculate_unit_multiplicator("kWh",dict_detail['eYearStr'])),  # pylint: disable=line-too-long
+                           'Total_Generation': float(dict_detail['eTotal'] * calculate_unit_multiplicator("kWh",dict_detail['eTotalStr'])),  # pylint: disable=line-too-long
                            'Generation_Last_Month': float(dict_year[-2]['energy']),
-                           'Power_Grid_Total_Power': float(dict_detail['psum'] * calculate_unit_multiplicator("W",dict_detail['psumStr'])),
+                           'Power_Grid_Total_Power': float(dict_detail['psum'] * calculate_unit_multiplicator("W",dict_detail['psumStr'])),  # pylint: disable=line-too-long
                            'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellTotalEnergyStr'])),  # pylint: disable=line-too-long
                            'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridPurchasedTotalEnergyStr'])),  # pylint: disable=line-too-long
-                           'Consumption_Power': float(dict_detail['familyLoadPower'] * calculate_unit_multiplicator("W",dict_detail['familyLoadPowerStr'])),
-                           'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['homeLoadTotalEnergyStr'])),
+                           'Consumption_Power': float(dict_detail['familyLoadPower'] * calculate_unit_multiplicator("W",dict_detail['familyLoadPowerStr'])),  # pylint: disable=line-too-long
+                           'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['homeLoadTotalEnergyStr'])),  # pylint: disable=line-too-long
                            'Daily_Energy_Used': float(dict_detail['eToday'] * calculate_unit_multiplicator("kWh",dict_detail['eTodayStr']) - (dict_detail['gridSellTodayEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellTodayEnergyStr']))),  # pylint: disable=line-too-long
                            'Monthly_Energy_Used': float(dict_detail['eMonth'] * calculate_unit_multiplicator("kWh",dict_detail['eMonthStr']) - dict_detail['gridSellMonthEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellMonthEnergyStr'])),  # pylint: disable=line-too-long
                            'Annual_Energy_Used': float(dict_detail['eYear'] * calculate_unit_multiplicator("kWh",dict_detail['eYearStr']) - dict_detail['gridSellYearEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellYearEnergyStr'])),  # pylint: disable=line-too-long
                            'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
-            # Read inverter_detail into dict
-            dict_fields.update(dict_detail)
+            # Convert float values
+            changelist_float = []
+            for key, value in dict_detail.items():
+                if isinstance(value, int):
+                    changelist_float.append(key)
 
+            ignore_change_to_float = []
+            for key in ignore_change_to_float:
+                changelist_float.remove(key)
+
+            dict_float = convert_dict_details_to_float(dict_detail, changelist_float)
+            dict_fields.update(dict_float)
+
+            # Convert boolean values
+            changelist_boolean = ["isShow"]
+            dict_boolean = convert_dict_details_to_boolean(dict_detail, changelist_boolean)
+            dict_fields.update(dict_boolean)
+
+            # remove empty battery list
+            if len(dict_fields["batteryList"]) == 0:
+                dict_fields.pop("batteryList")
+
+            # Read inverter_detail into dict
             influx_to_submit = [
                 {
                     "measurement": influx_measurement,
@@ -336,9 +396,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 # power generation (int, W)
                 "v2": inverter_data['pac'] * 1000,
                 # energy consumption (int, Wh)
-                "v3": inverter_data['familyLoadPower'] * 1000,
+                "v3": inverter_data['homeLoadTotalEnergy'] * 1000,
                 # power consumption (int, W)
-                "v4": inverter_data['homeLoadTotalEnergy'],
+                "v4": inverter_data['familyLoadPower'] * 1000,
                 # temperature (float, °C), not available by inverter data
                 # "v5": 0.0,
                 # voltage (float, V)
@@ -378,20 +438,22 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
             msgs = []
 
-            # Create the topic base using the client_id and serial number
-            mqtt_topic = ''.join([mqtt_client, "/"])
+            # Topic base using the env mqtt_topic_pfad + client ID
+            mqtt_topic = ''.join([mqtt_topic_pfad, "/", mqtt_client, "/"])
 
             if mqtt_username != "" and mqtt_password != "":
                 auth_settings = {'username': mqtt_username, 'password': mqtt_password}
             else:
                 auth_settings = None
 
+            inverter_data.pop("batteryList")
+
             msgs.append((mqtt_topic + "updateDate", int(update_date), 0, False))
             for key, value in inverter_data.items():
                 msgs.append((mqtt_topic + key, value, 0, False))
 
             logging.debug("writing to MQTT -> %s", msgs)
-            publish.multiple(msgs, hostname=mqtt_server, auth=auth_settings)
+            publish.multiple(msgs, hostname=mqtt_server, port=mqtt_port, client_id=mqtt_client, auth=auth_settings)  # pylint: disable=line-too-long
 
     if api_key_id == "" or api_key_pw == "":
         logging.error('Key ID and secret are mandatory for Solis Cloud API')
