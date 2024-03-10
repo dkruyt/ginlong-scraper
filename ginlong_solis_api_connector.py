@@ -82,6 +82,27 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         """prettifies json for better output readability"""
         return json.dumps(json.loads(input_json), indent=2)
 
+    def calculate_unit_multiplicator(expected_unit, inverter_unit):
+        fb_inv=inverter_unit[1]
+        fb_exp=expected_unit[1]
+        multiplicator = calculate_factor(fb_inv) / calculate_factor(fb_exp)
+        return multiplicator
+
+    def calculate_factor(fb_factor):
+        if fb_factor == "k":
+            factor = 1000
+        elif fb_factor == "M":
+            factor = 1000000
+        elif fb_factor == "G":
+            factor = 1000000000
+        elif fb_factor == "T":
+            factor = 1000000000000
+        elif fb_factor == "m":
+            factor = 1/1000
+        else:
+            factor = 1
+        return factor
+
     # == post ====================================================================
     def execute_request(target_url, data, headers, retries) -> str:
         """execute request and handle errors"""
@@ -231,7 +252,7 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return get_average_value(inverter_data, 'iAc1', 'iAc2', 'iAc3')
 
     def get_average_value(inverter_data, field_phase_1, field_phase_2, field_phase_3):
-        if int(inverter_data['acOutputType']) == 0 or override_single_phase_inverter == 'true':  # pylint: disable=line-too-long
+        if int(inverter_data['acOutputType']) == 0 or override_single_phase_inverter == 'true':
             average_value = float(inverter_data[field_phase_1])
         else:
             average_value = float((inverter_data[field_phase_1] + inverter_data[field_phase_2] + inverter_data[field_phase_3]) / 3)  # pylint: disable=line-too-long
@@ -269,36 +290,36 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_year = inverter_year
             dict_all = inverter_all  # pylint: disable=unused-variable
 
-            dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1']),
-                           'DC_Voltage_PV2': float(dict_detail['uPv2']),
-                           'DC_Voltage_PV3': float(dict_detail['uPv3']),
-                           'DC_Voltage_PV4': float(dict_detail['uPv4']),
-                           'DC_Current1': float(dict_detail['iPv1']),
-                           'DC_Current2': float(dict_detail['iPv2']),
-                           'DC_Current3': float(dict_detail['iPv3']),
-                           'DC_Current4': float(dict_detail['iPv4']),
+            dict_fields = {'DC_Voltage_PV1': float(dict_detail['uPv1'] * calculate_unit_multiplicator("V",dict_detail['uPv1Str'])),  # pylint: disable=line-too-long
+                           'DC_Voltage_PV2': float(dict_detail['uPv2'] * calculate_unit_multiplicator("V",dict_detail['uPv2Str'])),  # pylint: disable=line-too-long  # pylint: disable=line-too-long
+                           'DC_Voltage_PV3': float(dict_detail['uPv3'] * calculate_unit_multiplicator("V",dict_detail['uPv3Str'])),  # pylint: disable=line-too-long
+                           'DC_Voltage_PV4': float(dict_detail['uPv4'] * calculate_unit_multiplicator("V",dict_detail['uPv4Str'])),  # pylint: disable=line-too-long
+                           'DC_Current1': float(dict_detail['iPv1'] * calculate_unit_multiplicator("A",dict_detail['iPv1Str'])),  # pylint: disable=line-too-long
+                           'DC_Current2': float(dict_detail['iPv2'] * calculate_unit_multiplicator("A",dict_detail['iPv2Str'])),  # pylint: disable=line-too-long
+                           'DC_Current3': float(dict_detail['iPv3'] * calculate_unit_multiplicator("A",dict_detail['iPv3Str'])),  # pylint: disable=line-too-long
+                           'DC_Current4': float(dict_detail['iPv4'] * calculate_unit_multiplicator("A",dict_detail['iPv4Str'])),  # pylint: disable=line-too-long
                            'AC_Voltage': get_ac_voltage(dict_detail),
                            'AC_Current': get_ac_current(dict_detail),
-                           'AC_Power': float(dict_detail['pac'] * 1000),
+                           'AC_Power': float(dict_detail['pac'] * calculate_unit_multiplicator("W",dict_detail['pacStr'])),  # pylint: disable=line-too-long
                            'AC_Frequency': float(dict_detail['fac']),
-                           'DC_Power_PV1': float(dict_detail['pow1']),
-                           'DC_Power_PV2': float(dict_detail['pow2']),
-                           'DC_Power_PV3': float(dict_detail['pow3']),
-                           'DC_Power_PV4': float(dict_detail['pow4']),
+                           'DC_Power_PV1': float(dict_detail['pow1'] * calculate_unit_multiplicator("W",dict_detail['pow1Str'])),  # pylint: disable=line-too-long
+                           'DC_Power_PV2': float(dict_detail['pow2'] * calculate_unit_multiplicator("W",dict_detail['pow2Str'])),  # pylint: disable=line-too-long
+                           'DC_Power_PV3': float(dict_detail['pow3'] * calculate_unit_multiplicator("W",dict_detail['pow3Str'])),  # pylint: disable=line-too-long
+                           'DC_Power_PV4': float(dict_detail['pow4'] * calculate_unit_multiplicator("W",dict_detail['pow4Str'])),  # pylint: disable=line-too-long
                            'Inverter_Temperature': float(dict_detail['inverterTemperature']),
-                           'Daily_Generation': float(dict_detail['eToday']),
-                           'Monthly_Generation': float(dict_detail['eMonth']),
-                           'Annual_Generation': float(dict_detail['eYear']),
-                           'Total_Generation': float(dict_detail['eTotal'] * 1000),
+                           'Daily_Generation': float(dict_detail['eToday'] * calculate_unit_multiplicator("kWh",dict_detail['eTodayStr'])),  # pylint: disable=line-too-long
+                           'Monthly_Generation': float(dict_detail['eMonth'] * calculate_unit_multiplicator("kWh",dict_detail['eMonthStr'])),  # pylint: disable=line-too-long
+                           'Annual_Generation': float(dict_detail['eYear'] * calculate_unit_multiplicator("kWh",dict_detail['eYearStr'])),  # pylint: disable=line-too-long
+                           'Total_Generation': float(dict_detail['eTotal'] * calculate_unit_multiplicator("kWh",dict_detail['eTotalStr'])),  # pylint: disable=line-too-long
                            'Generation_Last_Month': get_last_month_generation(dict_year),
-                           'Power_Grid_Total_Power': float(dict_detail['psum'] * 1000),
-                           'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy'] * 1000),  # pylint: disable=line-too-long
-                           'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy'] * 1000),  # pylint: disable=line-too-long
-                           'Consumption_Power': float(dict_detail['familyLoadPower'] * 1000),
-                           'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy'] * 1000),
-                           'Daily_Energy_Used': float(dict_detail['eToday'] - dict_detail['gridSellTodayEnergy']),  # pylint: disable=line-too-long
-                           'Monthly_Energy_Used': float(dict_detail['eMonth'] - dict_detail['gridSellMonthEnergy']),  # pylint: disable=line-too-long
-                           'Annual_Energy_Used': float(dict_detail['eYear'] - dict_detail['gridSellYearEnergy']),  # pylint: disable=line-too-long
+                           'Power_Grid_Total_Power': float(dict_detail['psum'] * calculate_unit_multiplicator("W",dict_detail['psumStr'])),  # pylint: disable=line-too-long
+                           'Total_On_grid_Generation': float(dict_detail['gridSellTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellTotalEnergyStr'])),  # pylint: disable=line-too-long
+                           'Total_Energy_Purchased': float(dict_detail['gridPurchasedTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridPurchasedTotalEnergyStr'])),  # pylint: disable=line-too-long
+                           'Consumption_Power': float(dict_detail['familyLoadPower'] * calculate_unit_multiplicator("W",dict_detail['familyLoadPowerStr'])),  # pylint: disable=line-too-long
+                           'Consumption_Energy': float(dict_detail['homeLoadTotalEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['homeLoadTotalEnergyStr'])),  # pylint: disable=line-too-long
+                           'Daily_Energy_Used': float(dict_detail['eToday'] * calculate_unit_multiplicator("kWh",dict_detail['eTodayStr']) - (dict_detail['gridSellTodayEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellTodayEnergyStr']))),  # pylint: disable=line-too-long
+                           'Monthly_Energy_Used': float(dict_detail['eMonth'] * calculate_unit_multiplicator("kWh",dict_detail['eMonthStr']) - dict_detail['gridSellMonthEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellMonthEnergyStr'])),  # pylint: disable=line-too-long
+                           'Annual_Energy_Used': float(dict_detail['eYear'] * calculate_unit_multiplicator("kWh",dict_detail['eYearStr']) - dict_detail['gridSellYearEnergy'] * calculate_unit_multiplicator("kWh",dict_detail['gridSellYearEnergyStr'])),  # pylint: disable=line-too-long
                            'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
