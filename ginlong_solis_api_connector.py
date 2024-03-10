@@ -83,8 +83,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.dumps(json.loads(input_json), indent=2)
 
     def calculate_unit_multiplicator(expected_unit, inverter_unit):
-        fb_inv=inverter_unit[1]
-        fb_exp=expected_unit[1]
+        fb_inv = inverter_unit[1]
+        fb_exp = expected_unit[1]
         multiplicator = calculate_factor(fb_inv) / calculate_factor(fb_exp)
         return multiplicator
 
