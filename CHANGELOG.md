@@ -7,6 +7,7 @@ This document provides an overview to the changes on the different releases...
 * Publishing task to Dockerhub should publish [SBOM](https://www.cisa.gov/sbom), too ([#57](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/57))
 * Add Mend renovate bot to repository ([#56](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/56))
 * Fixed parsing issues regarding api update from March 4th, 2024. ([#68](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/68))
+* Pinned the data units regarding the dynamic units on Ginlong API. ([#13](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/13))
 
 ## 2.4.0
 * Added `CHANGELOG.md` document to have central document for changes. ([#38](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/38))
