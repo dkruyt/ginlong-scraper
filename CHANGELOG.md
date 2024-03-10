@@ -2,6 +2,12 @@
 This document provides an overview to the changes on the different releases...
 
 ## NEXT
+* t.b.d.
+
+## 3.0.0
+> [!WARNING]  
+> In this update we refactored all actual and upcoming number fields to provide data in float values. There may be the
+> need to update your existing InfluxDB instance to handle the new data types.
 * Updated the Dockerhub repository on `README.md`, to not point to the [old dkruyt API scraper images](https://hub.docker.com/repository/docker/dkruyt/ginlong-scraper) ([#51](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/51))
 * Added publishing to Dockerhub repository [gentleman1983/ginlong-solis-api-connector](https://hub.docker.com/repository/docker/gentleman1983/ginlong-solis-api-connector) on release ([#55](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/55))
 * Publishing task to Dockerhub should publish [SBOM](https://www.cisa.gov/sbom), too ([#57](https://github.com/Gentleman1983/ginlong_solis_api_connector/issues/57))
