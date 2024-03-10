@@ -242,6 +242,14 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
             dict_to_change[param] = float(dict_to_change[param])
         return dict_to_change
 
+    def convert_dict_details_to_boolean(dict_to_change, parameters):
+        for param in parameters:
+            if dict_to_change[param]:
+                dict_to_change[param] = 1
+            else:
+                dict_to_change[param] = 0
+        return dict_to_change
+
     def get_last_month_generation(dict_year):
         generation_last_month = 0.0
         if len(dict_year) > 1:
@@ -249,10 +257,9 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
 
         return generation_last_month
 
-
     # == MAIN ====================================================================
     # Write to Influxdb
-    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date):
+    def write_to_influx_db(inverter_data, inverter_month, inverter_year, inverter_all, update_date): # pylint: disable=too-many-locals
         if influx.lower() == "true":
             logging.info('InfluxDB output is enabled, posting outputs now...')
 
@@ -295,26 +302,29 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                            'updateDate': int(dict_detail['dataTimestamp'])
                            }
 
-            # Read inverter_detail into dict
-            changelist=["iPv1","iPv2","iPv3","iPv4","iPv5",
-                        "iPv6","iPv7","iPv8","iPv9","iPv10",
-                        "iPv11","iPv12","iPv13","iPv14","iPv15",
-                        "iPv16","iPv17","iPv18","iPv19","iPv20",
-                        "iPv21","iPv22","iPv23","iPv24","iPv25",
-                        "iPv26","iPv27","iPv28","iPv29","iPv30",
-                        "iPv31","iPv32",
-                        "uPv1","uPv2","uPv3","uPv4","uPv5",
-                        "uPv6","uPv7","uPv8","uPv9","uPv10",
-                        "uPv11", "uPv12", "uPv13","uPv14", "uPv15",
-                        "uPv16", "uPv17", "uPv18", "uPv19", "uPv20",
-                        "uPv21", "uPv22", "uPv23", "uPv24","uPv25",
-                        "uPv26", "uPv27", "uPv28", "uPv29","uPv30",
-                        "uPv31", "uPv32",
-                        "iAc1","iAc2","iAc3","uAc1","uAc2","uAc3",
-                        "pA","pB","pC"]
-            dict_float = convert_dict_details_to_float(dict_detail,changelist)
+            # Convert float values
+            changelist_float = []
+            for key, value in dict_detail.items():
+                if isinstance(value, int):
+                    changelist_float.append(key)
+
+            ignore_change_to_float = []
+            for key in ignore_change_to_float:
+                changelist_float.remove(key)
+
+            dict_float = convert_dict_details_to_float(dict_detail, changelist_float)
             dict_fields.update(dict_float)
 
+            # Convert boolean values
+            changelist_boolean = ["isShow"]
+            dict_boolean = convert_dict_details_to_boolean(dict_detail, changelist_boolean)
+            dict_fields.update(dict_boolean)
+
+            # remove empty battery list
+            if len(dict_fields["batteryList"]) == 0:
+                dict_fields.pop("batteryList")
+
+            # Read inverter_detail into dict
             influx_to_submit = [
                 {
                     "measurement": influx_measurement,
@@ -414,6 +424,8 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
                 auth_settings = {'username': mqtt_username, 'password': mqtt_password}
             else:
                 auth_settings = None
+
+            inverter_data.pop("batteryList")
 
             msgs.append((mqtt_topic + "updateDate", int(update_date), 0, False))
             for key, value in inverter_data.items():
