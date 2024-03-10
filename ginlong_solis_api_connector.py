@@ -83,9 +83,14 @@ def do_work():  # pylint: disable=too-many-locals disable=too-many-statements
         return json.dumps(json.loads(input_json), indent=2)
 
     def calculate_unit_multiplicator(expected_unit, inverter_unit):
+        if len(inverter_unit) < 1:
+            logging.debug("Detected empty inverter unit. Returning multiplicator = 1")
+            return 1
+
         fb_inv = inverter_unit[1]
         fb_exp = expected_unit[1]
         multiplicator = calculate_factor(fb_inv) / calculate_factor(fb_exp)
+        logging.debug("Call for caluculating multiplicator using expected unit '%s' and inverter unit '%s' resulting in multiplicator '%s'.", expected_unit, inverter_unit, multiplicator)  # pylint: disable=line-too-long
         return multiplicator
 
     def calculate_factor(fb_factor):
