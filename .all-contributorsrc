@@ -1,0 +1,89 @@
+{
+  "_comment": "This JSON file controls the behaviour of the all contributors bot. A description of the keys can be found here: https://allcontributors.org/docs/en/bot/configuration",
+  "projectName": "ginlong_solis_api_connector",
+  "projectOwner": "Gentleman1983",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributorsPerLine": 7,
+  "contributorsSortAlphabetically": false,
+  "linkToUsage": true,
+  "skipCi": true,
+  "contributors": [
+    {
+      "login": "TobiO79",
+      "name": "Tobias Otto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30373938?v=4",
+      "profile": "https://github.com/TobiO79",
+      "contributions": [
+        "test",
+        "code",
+        "maintenance",
+        "review"
+      ]
+    },
+    {
+      "login": "Gentleman1983",
+      "name": "Christian Otto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1020222?v=4",
+      "profile": "https://github.com/Gentleman1983",
+      "contributions": [
+        "test",
+        "code",
+        "maintenance",
+        "review"
+      ]
+    },
+    {
+      "login": "petermdevries",
+      "name": "Peter de Vries",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15040708?v=4",
+      "profile": "https://github.com/petermdevries",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Flecky13",
+      "name": "Pedro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57505680?v=4",
+      "profile": "https://github.com/Flecky13",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "philicibine",
+      "name": "philicibine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16887758?v=4",
+      "profile": "https://github.com/philicibine",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "MetPhoto",
+      "name": "Mark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2766363?v=4",
+      "profile": "https://github.com/MetPhoto",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Stephen2615",
+      "name": "Stephen2615",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43490186?v=4",
+      "profile": "https://github.com/Stephen2615",
+      "contributions": [
+        "bug"
+      ]
+    }
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular"
+}
